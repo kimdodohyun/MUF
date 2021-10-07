@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "945391550114",
+    "project_id": "inhamuf",
+    "storage_bucket": "inhamuf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:945391550114:android:4310ed37436dd07adba1fb",
+        "android_client_info": {
+          "package_name": "com.example.muf"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "945391550114-1nfvj78qprmcma92dhhbns4m8id0tkj0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDeOMOljnWtOYdrRXln3eaRrx4Sm_VbFmE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "945391550114-1nfvj78qprmcma92dhhbns4m8id0tkj0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

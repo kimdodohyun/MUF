@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">MUF</string>
+    <string name="friends_list_title">friends_list</string>
+    <string name="chatting_title">chatting</string>
+    <string name="community_title">community</string>
+    <string name="home_title">home</string>
+    <string name="my_profile_title">my_profile</string>
 </resources>

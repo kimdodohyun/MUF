@@ -3,6 +3,16 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/cjdfi/AndroidStudioProjects/MUF/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1" />
+        <entry key="..\:/Users/cjdfi/AndroidStudioProjects/MUF/app/src/main/res/layout/activity_home.xml" value="0.264" />
+        <entry key="..\:/Users/cjdfi/AndroidStudioProjects/MUF/app/src/main/res/layout/activity_main.xml" value="0.24114583333333334" />
+        <entry key="..\:/Users/cjdfi/AndroidStudioProjects/MUF/app/src/main/res/layout/community_view.xml" value="0.1" />
+        <entry key="..\:/Users/cjdfi/AndroidStudioProjects/MUF/app/src/main/res/layout/frag1.xml" value="0.24114583333333334" />
+        <entry key="..\:/Users/cjdfi/AndroidStudioProjects/MUF/app/src/main/res/layout/frag2.xml" value="0.24114583333333334" />
+        <entry key="..\:/Users/cjdfi/AndroidStudioProjects/MUF/app/src/main/res/layout/frag3.xml" value="0.24114583333333334" />
+        <entry key="..\:/Users/cjdfi/AndroidStudioProjects/MUF/app/src/main/res/layout/frag4.xml" value="0.24114583333333334" />
+        <entry key="..\:/Users/cjdfi/AndroidStudioProjects/MUF/app/src/main/res/layout/frag5.xml" value="0.24114583333333334" />
+        <entry key="..\:/Users/cjdfi/AndroidStudioProjects/MUF/app/src/main/res/menu/bottom_menu.xml" value="0.264" />
         <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/drawable/buttonshape.xml" value="0.20989583333333334" />
         <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1953125" />
         <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/layout/activity_home.xml" value="0.19739583333333333" />

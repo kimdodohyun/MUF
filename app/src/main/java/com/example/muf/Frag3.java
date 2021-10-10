@@ -9,14 +9,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-public class Flag5 extends Fragment {
+public class Frag3 extends Fragment {
 
     private View view;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.frag5, container, false);
+        view = inflater.inflate(R.layout.frag3, container, false);
 
         return view;
     }

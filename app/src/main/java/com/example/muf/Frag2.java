@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-public class Flag2 extends Fragment {
+public class Frag2 extends Fragment {
 
     private View view;
 

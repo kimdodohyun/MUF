@@ -12,12 +12,12 @@ import android.view.MenuItem;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class homeActivity extends AppCompatActivity {
-    static final String TAG = "HOME";
-    private BottomNavigationView bottomnavigationiew;
-    private FragmentManager fm;
-    private FragmentTransaction ft;
-    private Frag1 frag1;
-    private Frag2 frag2;
+        static final String TAG = "HOME";
+        private BottomNavigationView bottomNavigationView;
+        private FragmentManager fm;
+        private FragmentTransaction ft;
+        private Frag1 frag1;
+        private Frag2 frag2;
     private Frag3 frag3;
     private Frag4 frag4;
     private Frag5 frag5;
@@ -27,8 +27,9 @@ public class homeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        bottomnavigationiew = findViewById(R.id.bottom_navi);
-        bottomnavigationiew.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+        bottomNavigationView = findViewById(R.id.bottom_navi);
+        bottomNavigationView.setSelectedItemId(R.id.main_home);
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch(item.getItemId()){
@@ -56,7 +57,7 @@ public class homeActivity extends AppCompatActivity {
         frag3 = new Frag3();
         frag4 = new Frag4();
         frag5 = new Frag5();
-        setFrag(0); //첫 프래그먼트 화면 지정
+        setFrag(2); //첫 프래그먼트 화면 지정
 
     }
 

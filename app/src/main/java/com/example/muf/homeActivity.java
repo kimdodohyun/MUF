@@ -63,8 +63,6 @@ public class homeActivity extends AppCompatActivity {
 
     }
 
-
-
     //프래그먼트 교체가 일어나는 실행문
     private void setFrag(int n){
         fm = getSupportFragmentManager();

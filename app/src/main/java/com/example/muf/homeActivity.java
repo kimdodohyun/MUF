@@ -39,19 +39,10 @@ public class homeActivity extends AppCompatActivity {
     private Home_frag frag3;
     private Community_frag frag4;
     private Myprofile_frag frag5;
-    static final String TAG = "HOME";
     private static final String CLIENT_ID = "6102ea6562fe41fd99ebad74ecffd39f";
     private static final String REDIRECT_URI ="com.example.muf://callback";
     private static final int REQUEST_CODE = 1337;
     private SpotifyAppRemote mSpotifyAppRemote;
-    private BottomNavigationView bottomNavigationView;
-    private FragmentManager fm;
-    private FragmentTransaction ft;
-    private Frag1 frag1;
-    private Frag2 frag2;
-    private Frag3 frag3;
-    private Frag4 frag4;
-    private Frag5 frag5;
     private MyBroadcastReceiver br = new MyBroadcastReceiver();
 
     @Override

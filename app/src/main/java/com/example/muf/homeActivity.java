@@ -30,6 +30,7 @@ import com.spotify.sdk.android.auth.AuthorizationResponse;
 import java.util.Locale;
 
 public class homeActivity extends AppCompatActivity {
+    public static String AUTH_TOKEN;
     static final String TAG = "HOME";
     private BottomNavigationView bottomNavigationView;
     private FragmentManager fm;
@@ -43,7 +44,7 @@ public class homeActivity extends AppCompatActivity {
     private static final String REDIRECT_URI ="com.example.muf://callback";
     private static final int REQUEST_CODE = 1337;
     private SpotifyAppRemote mSpotifyAppRemote;
-    private MyBroadcastReceiver br = new MyBroadcastReceiver();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,11 +84,6 @@ public class homeActivity extends AppCompatActivity {
         frag5 = new Myprofile_frag();
 
         setFrag(2); //첫 프래그먼트 화면 지정
-
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(MyBroadcastReceiver.BroadcastTypes.METADATA_CHANGED);
-
-        this.registerReceiver(br,filter);
     }
 
     @Override
@@ -141,7 +137,7 @@ public class homeActivity extends AppCompatActivity {
             switch (response.getType()) {
                 // Response was successful and contains auth token
                 case TOKEN:
-                    // Handle successful response
+                    AUTH_TOKEN = response.getAccessToken();
                     Log.d("STARTING", "GOT AUTH TOKEN");
                     break;
 
@@ -221,11 +217,6 @@ public class homeActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        this.unregisterReceiver(br);
-        super.onDestroy();
-    }
 
     @Override
     protected void onStop() {

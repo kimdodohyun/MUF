@@ -3,6 +3,7 @@ package com.example.muf;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -29,6 +30,15 @@ import com.spotify.sdk.android.auth.AuthorizationResponse;
 import java.util.Locale;
 
 public class homeActivity extends AppCompatActivity {
+    static final String TAG = "HOME";
+    private BottomNavigationView bottomNavigationView;
+    private FragmentManager fm;
+    private FragmentTransaction ft;
+    private Friends_list_frag frag1;
+    private Chatting_frag frag2;
+    private Home_frag frag3;
+    private Community_frag frag4;
+    private Myprofile_frag frag5;
     static final String TAG = "HOME";
     private static final String CLIENT_ID = "6102ea6562fe41fd99ebad74ecffd39f";
     private static final String REDIRECT_URI ="com.example.muf://callback";
@@ -75,11 +85,12 @@ public class homeActivity extends AppCompatActivity {
             }
         });
 
-        frag1 = new Frag1();
-        frag2 = new Frag2();
-        frag3 = new Frag3();
-        frag4 = new Frag4();
-        frag5 = new Frag5();
+        frag1 = new Friends_list_frag();
+        frag2 = new Chatting_frag();
+        frag3 = new Home_frag();
+        frag4 = new Community_frag();
+        frag5 = new Myprofile_frag();
+
         setFrag(2); //첫 프래그먼트 화면 지정
 
         IntentFilter filter = new IntentFilter();
@@ -230,4 +241,5 @@ public class homeActivity extends AppCompatActivity {
         super.onStop();
         SpotifyAppRemote.disconnect(mSpotifyAppRemote);
     }
+
 }

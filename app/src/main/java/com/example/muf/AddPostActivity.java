@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -18,21 +19,25 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-
 public class AddPostActivity extends AppCompatActivity {
     private static final String TAG = "AddPostActivity";
     private FirebaseUser user;
+    private String user_uid;
     private Community_frag community;
     private FragmentManager fm;
     private FragmentTransaction ft;
-
+//    private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+//    private DatabaseReference databaseReference = firebaseDatabase.getReference();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.write_post_layout);
         findViewById(R.id.upload).setOnClickListener(onClickListener);
+        findViewById(R.id.search_music).setOnClickListener(onClickListener);
         community = new Community_frag();
     }
 
@@ -55,19 +60,20 @@ public class AddPostActivity extends AppCompatActivity {
 
     private void postUpdate(){
         final String contents = ((EditText) findViewById(R.id.postcontents)).getText().toString();
-
         if(contents.length() > 0){
             user = FirebaseAuth.getInstance().getCurrentUser();
-            PostFireBase postInfo = new PostFireBase(contents, user.getUid());
+            user_uid = user.getUid();
+            PostFireBase postInfo = new PostFireBase(contents, user_uid);
             uploader(postInfo);
         } else{
             startToast("내용을 입력해주세요.");
         }
     }
 
-    private void uploader(PostFireBase postInfo){
+    private void uploader(PostFireBase postInfo){ //파이어스토어에 작성내용 업로드
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection( "posts").add(postInfo)
+
+        db.collection(user_uid).add(postInfo) //파이어스토어 user_uid 컬렉션에 postInfo 객체에 저장된 게시글내용을 업로드
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
@@ -86,15 +92,4 @@ public class AddPostActivity extends AppCompatActivity {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
-    private void setFrag(int n){
-        fm = getSupportFragmentManager();
-        ft = fm.beginTransaction();
-        switch (n){
-            case 0:
-                Log.d(TAG, "setFrag: frag1");
-                ft.replace(R.id.addpostlayout, community);
-                ft.commit();
-                break;
-        }
-    }
 }

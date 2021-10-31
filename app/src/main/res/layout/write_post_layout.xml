@@ -33,6 +33,12 @@
             android:gravity="top"
             android:hint="내용"
             android:lines="10" />
+
+        <Button
+            android:id="@+id/search_music"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="노래검색" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
@@ -40,6 +46,5 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="업로드" />
-
 
 </LinearLayout>

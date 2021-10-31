@@ -1,5 +1,6 @@
 package com.example.muf;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -80,8 +81,9 @@ public class SearchActivity extends AppCompatActivity implements Search.View {
             public void onItemSelected(View itemView, Track item) {
                 Music selected_music;
                 selected_music = mActionListener.selectTrack(item);
-                Intent intent = new Intent(SearchActivity.this, AddPostActivity.class);
-                intent.putExtra("Data",selected_music);
+                Intent intent = new Intent();
+                intent.putExtra("music",selected_music);
+                setResult(RESULT_OK,intent);
                 finish();
             }
         });

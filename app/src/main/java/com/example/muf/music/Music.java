@@ -48,4 +48,5 @@ public class Music implements Serializable {
     public String getArtist_id() {
         return artist_id;
     }
+
 }

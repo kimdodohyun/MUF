@@ -1,6 +1,7 @@
 package com.example.muf;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 
 import com.example.muf.Community_frag;
 import com.example.muf.R;
+import com.example.muf.music.Music;
 import com.example.muf.post.PostFireBase;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -30,6 +32,7 @@ public class AddPostActivity extends AppCompatActivity {
     private Community_frag community;
     private FragmentManager fm;
     private FragmentTransaction ft;
+    private Music selected_music;
 //    private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
 //    private DatabaseReference databaseReference = firebaseDatabase.getReference();
     @Override
@@ -55,11 +58,20 @@ public class AddPostActivity extends AppCompatActivity {
                     finish();
                     break;
                 case R.id.search_music:
-                    Intent intent = new Intent(getApplication(), SearchActivity.class);
-                    startActivity(intent);
+                    Intent intent = new Intent(AddPostActivity.this, SearchActivity.class);
+                    startActivityForResult(intent,101);
             }
         }
     };
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == 101){
+            selected_music = (Music)data.getSerializableExtra("music");
+        }
+    }
 
     private void postUpdate(){
         final String contents = ((EditText) findViewById(R.id.postcontents)).getText().toString();

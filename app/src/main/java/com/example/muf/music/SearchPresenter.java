@@ -49,7 +49,6 @@ public class SearchPresenter implements Search.ActionListener{
 
     @Override
     public void init(String accessToken) {
-        logMessage("Api Client created");
         SpotifyApi spotifyApi = new SpotifyApi();
 
         if (accessToken != null) {
@@ -85,7 +84,7 @@ public class SearchPresenter implements Search.ActionListener{
 
     @Override
     public void destroy() {
-        mContext.unbindService(mServiceConnection);
+
     }
 
     @Override

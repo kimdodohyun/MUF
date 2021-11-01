@@ -11,37 +11,69 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.muf.Community_frag;
 import com.example.muf.R;
 import com.example.muf.music.Music;
+import com.example.muf.post.Contents;
 import com.example.muf.post.PostFireBase;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import kaaes.spotify.webapi.android.models.Image;
+
 public class AddPostActivity extends AppCompatActivity {
     private static final String TAG = "AddPostActivity";
-    private FirebaseUser user;
-    private String user_uid;
-    private Community_frag community;
-    private FragmentManager fm;
-    private FragmentTransaction ft;
+    private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    private String user_uid = user.getUid();
     private Music selected_music;
-//    private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-//    private DatabaseReference databaseReference = firebaseDatabase.getReference();
+    private User userinfo;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private String albumtitle;
+    private String albumimg;
+    private ImageView imageView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.write_post_layout);
         findViewById(R.id.upload).setOnClickListener(onClickListener);
         findViewById(R.id.search_music).setOnClickListener(onClickListener);
-        community = new Community_frag();
+        userinfo = new User();
+        imageView = findViewById(R.id.search_result_img);
+        //파이어스토어에서 현재 user의 userinfo 가져오기
+        DocumentReference docRef = db.collection("userinfo_" + user_uid).document("userinfo");
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()){
+                    DocumentSnapshot document = task.getResult();
+                    if(document.exists()){
+                        userinfo = document.toObject(User.class);
+                    }
+                }
+            }
+        });
+
     }
 
     @Override
@@ -70,15 +102,21 @@ public class AddPostActivity extends AppCompatActivity {
 
         if(requestCode == 101){
             selected_music = (Music)data.getSerializableExtra("music");
+            albumimg = selected_music.getImg_uri();
+            albumtitle = selected_music.getTitle();
+            Picasso.get().load(albumimg).into(imageView);
+            imageView.setVisibility(View.VISIBLE);
+
         }
     }
 
     private void postUpdate(){
-        final String contents = ((EditText) findViewById(R.id.postcontents)).getText().toString();
-        if(contents.length() > 0){
-            user = FirebaseAuth.getInstance().getCurrentUser();
-            user_uid = user.getUid();
-            PostFireBase postInfo = new PostFireBase(contents, user_uid);
+        final String inputtext = ((EditText) findViewById(R.id.postcontents)).getText().toString();
+        final String userprofileimg = userinfo.getProfileimg();
+        final String username = userinfo.getUsername();
+        if(inputtext.length() > 0){
+            //사용자프로필사진, 사용자이름, 앨범title, 앨범img, inputtext를 넘겨야함
+            PostFireBase postInfo = new PostFireBase(userprofileimg, username, albumtitle, albumimg, inputtext);
             uploader(postInfo);
         } else{
             startToast("내용을 입력해주세요.");
@@ -86,9 +124,21 @@ public class AddPostActivity extends AppCompatActivity {
     }
 
     private void uploader(PostFireBase postInfo){ //파이어스토어에 작성내용 업로드
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        db.collection(user_uid).add(postInfo) //파이어스토어 user_uid 컬렉션에 postInfo 객체에 저장된 게시글내용을 업로드
+        db.collection("mypostlist" + user_uid).add(postInfo) //파이어스토어 postlist 컬렉션에 postInfo 객체에 저장된 게시글내용을 업로드
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        Log.d(TAG, "DocumentSnapshot written with ID: " + documentReference.getId());
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error adding documnet", e);
+                    }
+                });
+        db.collection("totalpostlist" + user_uid).add(postInfo) //파이어스토어 postlist 컬렉션에 postInfo 객체에 저장된 게시글내용을 업로드
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {

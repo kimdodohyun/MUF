@@ -20,27 +20,31 @@
         android:layout_height="1dp"
         android:background="#FFFFFF" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textinputlayout"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:hintEnabled="false">
-
-        <com.google.android.material.textfield.TextInputEditText
+        android:layout_height="wrap_content">
+        <EditText
             android:id="@+id/postcontents"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="top"
-            android:hint="내용"
-            android:lines="10" />
-
-        <Button
-            android:id="@+id/search_music"
-            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="노래검색" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:lines="10"
+            android:gravity="top"
+            android:hint="내용을 입력해 주세요"/>
+        <ImageView
+            android:id="@+id/search_result_img"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="bottom|right"
+            android:visibility="invisible"
+            app:srcCompat="@drawable/ic_launcher_background"/>
 
+    </FrameLayout>
+
+    <Button
+        android:id="@+id/search_music"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="노래검색" />
     <Button
         android:id="@+id/upload"
         android:layout_width="match_parent"

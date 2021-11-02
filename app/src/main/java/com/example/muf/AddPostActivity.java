@@ -51,6 +51,7 @@ public class AddPostActivity extends AppCompatActivity {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private String albumtitle;
     private String albumimg;
+    private String artist;
     private ImageView imageView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +105,7 @@ public class AddPostActivity extends AppCompatActivity {
             selected_music = (Music)data.getSerializableExtra("music");
             albumimg = selected_music.getImg_uri();
             albumtitle = selected_music.getTitle();
+            artist = selected_music.getArtist_name();
             Picasso.get().load(albumimg).into(imageView);
             imageView.setVisibility(View.VISIBLE);
 
@@ -115,8 +117,8 @@ public class AddPostActivity extends AppCompatActivity {
         final String userprofileimg = userinfo.getProfileimg();
         final String username = userinfo.getUsername();
         if(inputtext.length() > 0){
-            //사용자프로필사진, 사용자이름, 앨범title, 앨범img, inputtext를 넘겨야함
-            PostFireBase postInfo = new PostFireBase(userprofileimg, username, albumtitle, albumimg, inputtext);
+            //사용자프로필사진, 사용자이름, 앨범title, artist, 앨범img, inputtext를 넘겨야함
+            PostFireBase postInfo = new PostFireBase(userprofileimg, username, albumtitle, artist, albumimg, inputtext);
             uploader(postInfo);
         } else{
             startToast("내용을 입력해주세요.");
@@ -138,7 +140,7 @@ public class AddPostActivity extends AppCompatActivity {
                         Log.w(TAG, "Error adding documnet", e);
                     }
                 });
-        db.collection("totalpostlist" + user_uid).add(postInfo) //파이어스토어 postlist 컬렉션에 postInfo 객체에 저장된 게시글내용을 업로드
+        db.collection("totalpostlist").add(postInfo) //파이어스토어 postlist 컬렉션에 postInfo 객체에 저장된 게시글내용을 업로드
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {

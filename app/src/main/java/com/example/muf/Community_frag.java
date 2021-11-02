@@ -14,12 +14,20 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.muf.post.Contents;
+import com.example.muf.post.PostFireBase;
 import com.example.muf.post.PostInfoAdapter;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
@@ -28,9 +36,9 @@ public class Community_frag extends Fragment {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
-    private ArrayList<Contents> arrayList;
-    private FirebaseDatabase database;
-    private DatabaseReference databaseReference;
+    private ArrayList<PostFireBase> arrayList;
+    private FirebaseFirestore firebaseFirestore;
+    private PostFireBase postFireBase;
 
     private View view;
     static final String TAG = "HOME";
@@ -50,26 +58,21 @@ public class Community_frag extends Fragment {
         recyclerView.setHasFixedSize(true); //리사이클러뷰 기존성능 강화
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
-        arrayList = new ArrayList<>(); //Contents 객체를 담을 어레이 리스트(어댑터쪽으로)
-
-        database = FirebaseDatabase.getInstance(); // 파이어베이스 데이터베이스 연동
-        databaseReference = database.getReference("Contents"); //DB 테이블 연결
-        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+        arrayList = new ArrayList<>(); //PostFireBase 객체를 담을 어레이 리스트(어댑터쪽으로)
+        postFireBase = new PostFireBase();
+        firebaseFirestore = FirebaseFirestore.getInstance();
+        firebaseFirestore.collection("totalpostlist").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                //파이어베이스 실시간 데이터베이스의 데이터를 받아오는 곳
-                arrayList.clear(); //혹시 기존에 남아있는 데이터가 없도록 초기화
-                for(DataSnapshot snapshot : dataSnapshot.getChildren()){ //반복문으로 데이터 List를 추출해냄
-                    Contents contents = snapshot.getValue(Contents.class); //만들어뒀던 contents 객체에 데이터 담기
-                    arrayList.add(contents); //담은 데이터들을 배열리스트에 넣고 리사이클러뷰로 보낼 준비
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()){
+                    for(QueryDocumentSnapshot document : task.getResult()){
+                        postFireBase = document.toObject(PostFireBase.class);
+                        arrayList.add(postFireBase);
+                    }
+                    adapter.notifyDataSetChanged();
+                }else{
+                    Log.d(TAG, "Error getting documents: ", task.getException());
                 }
-                adapter.notifyDataSetChanged(); //리스트 저장 및 새로고침
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                //DB를 가져오던 중 에러 발생 시
-                Log.e("Community_Fag", String.valueOf(error.toException()));
             }
         });
         adapter = new PostInfoAdapter(arrayList, getActivity().getApplicationContext());

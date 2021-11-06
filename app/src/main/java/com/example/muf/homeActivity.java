@@ -43,7 +43,7 @@ public class homeActivity extends AppCompatActivity {
     private static final String CLIENT_ID = "6102ea6562fe41fd99ebad74ecffd39f";
     private static final String REDIRECT_URI ="com.example.muf://callback";
     private static final int REQUEST_CODE = 1337;
-    private SpotifyAppRemote mSpotifyAppRemote;
+    public SpotifyAppRemote mSpotifyAppRemote;
 
 
     @Override

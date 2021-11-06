@@ -31,10 +31,14 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
-    private Button btnKakao;
     private FirebaseAuth mAuth;
     private static final int RC_SIGN_IN = 9001;
     private GoogleSignInClient googleSignInClient; // 구글 gso
@@ -49,10 +53,10 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         btnGoogle = findViewById(R.id.btnGoogleLogin);
-        btnKakao = findViewById(R.id.btnKakaoLogin);
 
         mAuth=FirebaseAuth.getInstance();
         if (mAuth.getCurrentUser() != null) {
+            Log.d(TAG, "onCreate: "+mAuth.getCurrentUser().getEmail());
             Intent intent = new Intent(getApplication(), homeActivity.class);
             startActivity(intent);
             finish();
@@ -90,13 +94,6 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onError(FacebookException error) {
-
-            }
-        });
-
-        btnKakao.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
             }
         });
@@ -165,9 +162,30 @@ public class LoginActivity extends AppCompatActivity {
 
     private void updateUI(FirebaseUser user){ // 로그인 성공시 화면 전환
         if(user!=null){
-            Intent intent = new Intent(this, homeActivity.class);
-            startActivity(intent);
-            finish();
+            FirebaseDatabase db = FirebaseDatabase.getInstance();
+            Log.d(TAG, "updateUI: "+user.getUid());
+            DatabaseReference refer = db.getReference("Users");
+            refer.orderByChild("uid").equalTo(user.getUid()).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if(snapshot.exists()){
+                        Intent intent = new Intent(getApplicationContext(),homeActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                    else{
+                        Intent intent = new Intent(getApplicationContext(), SettingUserActivity.class);
+                        intent.putExtra("uid",user.getUid());
+                        startActivity(intent);
+                        finish();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
         }
     }
 }

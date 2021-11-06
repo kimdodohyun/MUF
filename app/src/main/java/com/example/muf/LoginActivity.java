@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
+import com.facebook.CustomTabMainActivity;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginResult;
@@ -36,10 +37,14 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
     private static final int RC_SIGN_IN = 9001;
     private GoogleSignInClient googleSignInClient; // 구글 gso
     private CallbackManager callbackManager; // 페이스북 콜백 메니저
@@ -162,30 +167,30 @@ public class LoginActivity extends AppCompatActivity {
 
     private void updateUI(FirebaseUser user){ // 로그인 성공시 화면 전환
         if(user!=null){
-            FirebaseDatabase db = FirebaseDatabase.getInstance();
-            Log.d(TAG, "updateUI: "+user.getUid());
-            DatabaseReference refer = db.getReference("Users");
-            refer.orderByChild("uid").equalTo(user.getUid()).addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    if(snapshot.exists()){
-                        Intent intent = new Intent(getApplicationContext(),homeActivity.class);
-                        startActivity(intent);
-                        finish();
-                    }
-                    else{
-                        Intent intent = new Intent(getApplicationContext(), SettingUserActivity.class);
-                        intent.putExtra("uid",user.getUid());
-                        startActivity(intent);
-                        finish();
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
-            });
+            db = FirebaseFirestore.getInstance();
+            db.collection("Users").document(mAuth.getUid()).get()
+                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if(task.isSuccessful()){
+                                DocumentSnapshot doc = task.getResult();
+                                if(doc.exists()){
+                                    Intent intent = new Intent(getApplicationContext(), homeActivity.class);
+                                    startActivity(intent);
+                                    finish();
+                                }
+                                else{
+                                    Intent intent = new Intent(getApplicationContext(), SettingUserActivity.class);
+                                    intent.putExtra("uid",mAuth.getUid());
+                                    startActivity(intent);
+                                    finish();
+                                }
+                            }
+                            else{
+                                Log.d(TAG, "get failed with " + task.getException());
+                            }
+                        }
+                    });
         }
     }
 }

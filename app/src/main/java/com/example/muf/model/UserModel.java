@@ -1,4 +1,4 @@
-package com.example.muf;
+package com.example.muf.model;
 
 import java.util.List;
 

@@ -10,14 +10,18 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -29,7 +33,7 @@ public class SettingUserActivity extends AppCompatActivity {
     private String uid;
     private Uri img_uri;
     private String path_uri;
-    private FirebaseDatabase mDatabase;
+    private FirebaseFirestore mDatabase;
     private FirebaseStorage mStorage;
     private EditText et_nickname;
     private ImageView img_profile;
@@ -49,7 +53,7 @@ public class SettingUserActivity extends AppCompatActivity {
         Intent intent = getIntent();
         uid = intent.getStringExtra("uid");
 
-        mDatabase = FirebaseDatabase.getInstance();
+        mDatabase = FirebaseFirestore.getInstance();
         mStorage = FirebaseStorage.getInstance();
 
         btn_setting_img.setOnClickListener(new View.OnClickListener() {
@@ -79,8 +83,21 @@ public class SettingUserActivity extends AppCompatActivity {
                             hashMap.put("uid",uid);
                             hashMap.put("nickname",et_nickname.getText().toString());
                             hashMap.put("imageUrl",image_url.getResult().toString());
+                            hashMap.put("profileMusicUrl" , null);
 
-                            mDatabase.getReference().child("Users").child(uid).setValue(hashMap);
+                            mDatabase.collection("Users").document(uid).set(hashMap)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void unused) {
+                                            Log.d("setting", "Success");
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.w("setting", "Failure: " ,e);
+                                        }
+                                    });
 
                             Intent intent = new Intent(getApplicationContext(),homeActivity.class);
                             startActivity(intent);
@@ -93,9 +110,22 @@ public class SettingUserActivity extends AppCompatActivity {
 
                     hashMap.put("uid",uid);
                     hashMap.put("nickname",et_nickname.getText().toString());
-                    hashMap.put("imageUrl","");
+                    hashMap.put("imageUrl",null);
+                    hashMap.put("profileMusicUrl" , null);
 
-                    mDatabase.getReference().child("Users").child(uid).setValue(hashMap);
+                    mDatabase.collection("Users").document(uid).set(hashMap)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void unused) {
+                                    Log.d("setting", "Success");
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.w("setting", "Failure: " ,e);
+                                }
+                            });
 
                     Intent intent = new Intent(getApplicationContext(),homeActivity.class);
                     startActivity(intent);

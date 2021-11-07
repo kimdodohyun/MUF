@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -61,7 +62,7 @@ public class Community_frag extends Fragment {
         arrayList = new ArrayList<>(); //PostFireBase 객체를 담을 어레이 리스트(어댑터쪽으로)
         postFireBase = new PostFireBase();
         firebaseFirestore = FirebaseFirestore.getInstance();
-        firebaseFirestore.collection("totalpostlist").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        firebaseFirestore.collection("TotalPostLists").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if(task.isSuccessful()){
@@ -76,6 +77,7 @@ public class Community_frag extends Fragment {
             }
         });
         adapter = new PostInfoAdapter(arrayList, getActivity().getApplicationContext());
+        adapter.notifyDataSetChanged();
         recyclerView.setAdapter(adapter); //리사이클러뷰에 어댑터 연결
         return view;
     }

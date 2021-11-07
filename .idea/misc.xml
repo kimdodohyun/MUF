@@ -16,14 +16,17 @@
         <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/layout/activity_login.xml" value="0.2" />
         <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/layout/activity_main.xml" value="0.22" />
         <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/layout/activity_search.xml" value="0.25" />
-        <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/layout/activity_setting_user.xml" value="0.4" />
+        <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/layout/activity_setting_user.xml" value="0.2" />
         <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/layout/community_layout.xml" value="0.1578125" />
         <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/layout/frag1.xml" value="0.1296875" />
         <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/layout/frag2.xml" value="0.1296875" />
         <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/layout/frag3.xml" value="0.1296875" />
         <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/layout/frag5.xml" value="0.20520833333333333" />
         <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/layout/fragment_search.xml" value="0.18" />
-        <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/layout/home_layout.xml" value="0.1234375" />
+        <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/layout/friendslist_layout.xml" value="0.264" />
+        <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/layout/home_layout.xml" value="0.6" />
+        <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/layout/list_friend.xml" value="0.264" />
+        <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/layout/list_item.xml" value="0.15260416666666668" />
         <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/layout/list_music.xml" value="0.33" />
         <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/layout/music_item_recycler.xml" value="0.5" />
         <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/layout/myprofile_edit.xml" value="0.1234375" />

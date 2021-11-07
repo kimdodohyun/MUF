@@ -90,7 +90,6 @@ public class homeActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         authSpotify();
-        super.onStart();
         ConnectionParams connectionParams =
                 new ConnectionParams.Builder(CLIENT_ID)
                         .setRedirectUri(REDIRECT_URI)
@@ -189,27 +188,22 @@ public class homeActivity extends AppCompatActivity {
         ft = fm.beginTransaction();
         switch (n) {
             case 0:
-                Log.d(TAG, "setFrag: frag1");
                 ft.replace(R.id.main_frame, frag1);
                 ft.commit();
                 break;
             case 1:
-                Log.d(TAG, "setFrag: frag2");
                 ft.replace(R.id.main_frame, frag2);
                 ft.commit();
                 break;
             case 2:
-                Log.d(TAG, "setFrag: frag3");
                 ft.replace(R.id.main_frame, frag3);
                 ft.commit();
                 break;
             case 3:
-                Log.d(TAG, "setFrag: frag4");
                 ft.replace(R.id.main_frame, frag4);
                 ft.commit();
                 break;
             case 4:
-                Log.d(TAG, "setFrag: frag5");
                 ft.replace(R.id.main_frame, frag5);
                 ft.commit();
                 break;

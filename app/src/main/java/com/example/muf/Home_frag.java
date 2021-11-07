@@ -24,11 +24,7 @@ public class Home_frag extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(getArguments() != null){
-            Bundle bundle = new Bundle();
-            flag = bundle.getInt("flag");
-            Log.d("HomeFrag onCreate", "kimgijeong");
-        }
+        Log.d("HomeFrag onCreate", "kimgijeong");
     }
 
     @Nullable
@@ -39,7 +35,7 @@ public class Home_frag extends Fragment {
         Set_textview = view.findViewById(R.id.view_myzone_inhome);
         Log.d("HomeFrag onCreateView", "kimgijeong");
         if(getArguments() != null){ //HomeActivity에서 bundle받기
-            Bundle bundle = new Bundle();
+            Bundle bundle = getArguments();
             flag = bundle.getInt("flag");
             Log.d("HomeFrag onCreateView", "flagvalue = " + flag +" kimgijeong");
             if(flag == 1){ //Zone이 설정 된 경우
@@ -62,10 +58,6 @@ public class Home_frag extends Fragment {
 
         Log.d("onStart", "No_textview : " + No_textview.getVisibility() );
         Log.d("HomeFrag onStart", "flagvalue = " + flag +" kimgijeong");
-//        if(No_textview.getVisibility() == View.VISIBLE){ //Home에서 아직 위치가 설정되지 않은 경우
-//            Intent intent = new Intent(getActivity(), SetZoneActivity.class);
-//            startActivityForResult(intent, 1531);
-//        }
     }
 
     @Override

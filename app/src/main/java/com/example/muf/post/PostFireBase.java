@@ -11,12 +11,11 @@ public class PostFireBase {
     private String albumimg;
     private String inputtext;
     private Timestamp timestamp;
-    private int postnumber;
-
+    private String uid;
     public  PostFireBase(){}
 
     public PostFireBase(String Profileimg, String Username, String Albumtitle, String Artist,
-                        String Albumimg, String Inputtext, Timestamp Timestamp, int Postnumber){
+                        String Albumimg, String Inputtext, Timestamp Timestamp, String Uid){
         this.profileimg = Profileimg;
         this.username = Username;
         this.albumtitle = Albumtitle;
@@ -24,11 +23,11 @@ public class PostFireBase {
         this.albumimg = Albumimg;
         this.inputtext = Inputtext;
         this.timestamp = Timestamp;
-        this.postnumber = Postnumber;
+        this.uid = Uid;
     }
 
-    public int getPostnumber() { return postnumber; }
-    public void setPostnumber(int postnumber) { this.postnumber = postnumber; }
+    public String getUid() { return uid; }
+    public void setUid(String uid) { this.uid = uid;}
 
     public Timestamp getTimestamp() { return timestamp; }
     public void setTimestamp(Timestamp timestamp) { this.timestamp = timestamp; }

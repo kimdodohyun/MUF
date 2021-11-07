@@ -5,8 +5,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
 import android.content.DialogInterface;
@@ -18,14 +16,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.Button;
 
-import com.example.muf.AddPostActivity;
-import com.example.muf.Home_frag;
 import com.example.muf.R;
-import com.example.muf.homeActivity;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -38,7 +32,12 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
@@ -53,21 +52,48 @@ public class SetZoneActivity extends AppCompatActivity {
 
     private FusedLocationProviderClient fusedLocationProviderClient;
     private LocationRequest locationRequest;
-    private double latitude = 0, longitude = 0;
+    private Location user_location;
+    private Location inha_location;
+    private double distance;
+    private double latitude, longitude;
     private double inhalat = 37.450013, inhalng = 126.653577;
     private int flag = -1; //0 : No zone, 1 : Set zone
-
+    GoogleMap mygoogleMap;
+    private SupportMapFragment supportMapFragment;
+    private Button button;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set_zone);
-    }
+        Log.d("first latlng", ":" + latitude + "," + longitude);
+        checkLocationPermission(); //이 메소드가 호출되면 내위치 latitude와 longitude가 설정됨
+        Log.d("second latlng", ":" + latitude + "," + longitude);
+        //구글맵 내위치로 카메라 이동 후 마커생성
+        supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        supportMapFragment.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(@NonNull GoogleMap googleMap) {
+                mygoogleMap = googleMap;
+                LatLng latLng = new LatLng(latitude, longitude);
+                Log.d("third latlng", ":" + latitude + "," + longitude);
+                mygoogleMap.addMarker(new MarkerOptions().position(latLng).title("내위치" + latitude + "," + longitude));
+                mygoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+            }
+        });
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        checkLocationPermission();
+        button = findViewById(R.id.set_location_button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //HomeActivity로 flag intent 전달
+                Intent intent = new Intent();
+                intent.putExtra("flag", flag);
+                setResult(RESULT_OK,intent);
+                finish();
+            }
+        });
+
     }
 
     //앱이 사용자의 위치 정보에 접근할 수 있는 권한이 부여 됐는지 체크
@@ -181,29 +207,22 @@ public class SetZoneActivity extends AppCompatActivity {
         @Override
         public void onLocationResult(LocationResult locationResult) {
             super.onLocationResult(locationResult);
-            longitude = locationResult.getLastLocation().getLongitude();
             latitude = locationResult.getLastLocation().getLatitude();
+            longitude = locationResult.getLastLocation().getLongitude();
             fusedLocationProviderClient.removeLocationUpdates(locationCallback); //실시간이 아니라 한번만 실행하는 것
 
-            Location user_location = new Location("user");
+            user_location = new Location("user");
             user_location.setLatitude(latitude);
             user_location.setLongitude(longitude);
 
-            Location inha_location = new Location("inha");
+            inha_location = new Location("inha");
             inha_location.setLatitude(inhalat);
             inha_location.setLongitude(inhalng);
 
-            double distance = user_location.distanceTo(inha_location);
+            distance = user_location.distanceTo(inha_location);
+
             if(distance > 0 && distance < 500) flag = 1; //Set zone;
             else flag = 0;
-            flag = 1;
-            Log.d("SetZoneActivity : ", "flagvalue = " + flag + " kimgijeong");
-            //엑티비티간 화면 전환
-            Intent intent = new Intent();
-            intent.putExtra("flag", flag);
-            setResult(RESULT_OK,intent);
-            finish();
-
         }
 
         @Override

@@ -2,7 +2,6 @@ package com.example.muf;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -14,7 +13,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.muf.music.Music;
+import com.example.muf.SetZone.SetZoneActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
@@ -24,7 +23,6 @@ import com.spotify.protocol.types.Track;
 import com.spotify.sdk.android.auth.AuthorizationClient;
 import com.spotify.sdk.android.auth.AuthorizationRequest;
 import com.spotify.sdk.android.auth.AuthorizationResponse;
-import com.squareup.picasso.Picasso;
 
 public class homeActivity extends AppCompatActivity {
     public static String AUTH_TOKEN;
@@ -37,15 +35,11 @@ public class homeActivity extends AppCompatActivity {
     private Home_frag frag3;
     private Community_frag frag4;
     private Myprofile_frag frag5;
+    private int flag = -1;
     private static final String CLIENT_ID = "6102ea6562fe41fd99ebad74ecffd39f";
     private static final String REDIRECT_URI ="com.example.muf://callback";
     private static final int REQUEST_CODE = 1337;
     public SpotifyAppRemote mSpotifyAppRemote;
-    private SpotifyAppRemote mSpotifyAppRemote;
-    private int flag = -1;
-//    private Home_frag home_frag;
-//    private Community_frag community_frag;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,10 +77,12 @@ public class homeActivity extends AppCompatActivity {
         frag4 = new Community_frag();
         frag5 = new Myprofile_frag();
 
+        if(flag == -1){ //Home에서 아직 위치가 설정되지 않은 경우
+            Intent intent = new Intent(this, SetZoneActivity.class);
+            startActivityForResult(intent, 1531);
+        }
+
         Log.d("HomeActivity onCreate", "flagvalue = " + flag +" kimgijeong");
-
-        setFrag(2); //첫 프래그먼트 화면 지정
-
     }
 
     @Override
@@ -130,8 +126,6 @@ public class homeActivity extends AppCompatActivity {
         super.onPause();
         Log.d("HomeActivityonPuase", "kimgijeong");
     }
-
-
 
     @Override
     protected void onStop() {
@@ -181,25 +175,17 @@ public class homeActivity extends AppCompatActivity {
                     // Handle other cases
             }
         }
-//        else if (requestCode == 1531 && resultCode == RESULT_OK){
-//            Log.d("HomeActivity", "OnActivityResult kimgijeong");
-//            flag = data.getIntExtra("flag", -1);
-//            if(flag != -1){ //0 : Nozone, 1 : Setzone
-//                home_frag = new Home_frag();
-//                community_frag = new Community_frag();
-//                Bundle bundle = new Bundle();
-//                bundle.putInt("flag", flag);
-//                home_frag.setArguments(bundle);
-//                community_frag.setArguments(bundle);
-//                ft.replace(R.id.main_frame, home_frag); //R.id.home_frag_layout 헤더 사용해야 하는지 확인
-//                Fragment fragment3 = getSupportFragmentManager().findFragmentByTag("first_frag3");
-//                ft.remove(fragment3);
-//                frag3 = home_frag;
-//                Fragment fragment4 = getSupportFragmentManager().findFragmentByTag("first_frag4");
-//                ft.remove(fragment4);
-//                frag4 = community_frag;
-//            }
-//        }
+        else if (requestCode == 1531 && resultCode == RESULT_OK){
+            Log.d("HomeActivity", "OnActivityResult kimgijeong");
+            flag = data.getIntExtra("flag", -1);
+            if(flag != -1){ //0 : Nozone, 1 : Setzone
+                Bundle bundle = new Bundle();
+                bundle.putInt("flag", flag);
+                frag3.setArguments(bundle);
+                frag4.setArguments(bundle);
+                setFrag(2); //첫 프래그먼트 화면 지정
+            }
+        }
     }
 
     private void connected() {

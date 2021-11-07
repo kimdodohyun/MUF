@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -31,6 +32,8 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.spotify.sdk.android.auth.AuthorizationClient;
+import com.spotify.sdk.android.auth.AuthorizationResponse;
 
 import java.util.ArrayList;
 
@@ -61,11 +64,13 @@ public class Community_frag extends Fragment {
 
         view.findViewById(R.id.Go_write_post).setOnClickListener(onClickListener);
 
-        No_textview = view.findViewById(R.id.No_zone_inhome);
-        Set_textview = view.findViewById(R.id.view_myzone_inhome);
-        if(getArguments() != null){
+        No_textview = view.findViewById(R.id.No_zone_incommunity);
+        Set_textview = view.findViewById(R.id.view_myzone_incommunity);
+        Log.d("CommuFrag onCreateView", "kimgijeong");
+        if(getArguments() != null){ //HomeActivity에서 bundle받기
             Bundle bundle = getArguments();
-            flag = bundle.getInt("flag", -1);
+            flag = bundle.getInt("flag");
+            Log.d("CommuFrag onCreateView", "flagvalue = " + flag +" kimgijeong");
             if(flag == 1){ //Zone이 설정 된 경우
                 No_textview.setVisibility(View.INVISIBLE);
                 Set_textview.setVisibility(View.VISIBLE);
@@ -80,8 +85,8 @@ public class Community_frag extends Fragment {
         postFireBase = new PostFireBase();
         user_uid = FirebaseAuth.getInstance().getUid();
         firebaseFirestore = FirebaseFirestore.getInstance();
-        firebaseFirestore.collection("totalpostlist")
-                .orderBy("timestamp", Query.Direction.DESCENDING).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        firebaseFirestore.collection("TotalPostLists").orderBy("timestamp", Query.Direction.DESCENDING)
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if(task.isSuccessful()){

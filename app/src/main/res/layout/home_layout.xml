@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
+    android:id="@+id/home_frag_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -54,12 +55,10 @@
             android:layout_gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="NONE"
+            android:text="인하대학교"
             android:background="@drawable/rectangle_shape"
             android:textColor="#000000"/>
 
     </FrameLayout>
-
-
 
 </LinearLayout>

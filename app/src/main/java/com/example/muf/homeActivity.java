@@ -1,33 +1,28 @@
 package com.example.muf;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.muf.SetZone.SetZoneActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
-import com.spotify.android.appremote.api.ImagesApi;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
-import com.spotify.protocol.client.CallResult;
 import com.spotify.protocol.types.Image;
 import com.spotify.protocol.types.Track;
 import com.spotify.sdk.android.auth.AuthorizationClient;
 import com.spotify.sdk.android.auth.AuthorizationRequest;
 import com.spotify.sdk.android.auth.AuthorizationResponse;
-
-import java.util.Locale;
 
 public class homeActivity extends AppCompatActivity {
     public static String AUTH_TOKEN;
@@ -40,11 +35,11 @@ public class homeActivity extends AppCompatActivity {
     private Home_frag frag3;
     private Community_frag frag4;
     private Myprofile_frag frag5;
+    private int flag = -1;
     private static final String CLIENT_ID = "6102ea6562fe41fd99ebad74ecffd39f";
     private static final String REDIRECT_URI ="com.example.muf://callback";
     private static final int REQUEST_CODE = 1337;
     public SpotifyAppRemote mSpotifyAppRemote;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +78,12 @@ public class homeActivity extends AppCompatActivity {
         frag4 = new Community_frag();
         frag5 = new Myprofile_frag();
 
-        setFrag(2); //첫 프래그먼트 화면 지정
+        if(flag == -1){ //Home에서 아직 위치가 설정되지 않은 경우
+            Intent intent = new Intent(this, SetZoneActivity.class);
+            startActivityForResult(intent, 1531);
+        }
+
+        Log.d("HomeActivity onCreate", "flagvalue = " + flag +" kimgijeong");
     }
 
     @Override
@@ -149,6 +149,17 @@ public class homeActivity extends AppCompatActivity {
                 // Most likely auth flow was cancelled
                 default:
                     // Handle other cases
+            }
+        }
+        else if (requestCode == 1531 && resultCode == RESULT_OK){
+            Log.d("HomeActivity", "OnActivityResult kimgijeong");
+            flag = data.getIntExtra("flag", -1);
+            if(flag != -1){ //0 : Nozone, 1 : Setzone
+                Bundle bundle = new Bundle();
+                bundle.putInt("flag", flag);
+                frag3.setArguments(bundle);
+                frag4.setArguments(bundle);
+                setFrag(2); //첫 프래그먼트 화면 지정
             }
         }
     }

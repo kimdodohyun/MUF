@@ -24,6 +24,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -34,11 +35,15 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
+import java.util.Random;
 
 import kaaes.spotify.webapi.android.models.Image;
 
@@ -53,8 +58,10 @@ public class AddPostActivity extends AppCompatActivity {
     private String albumimg;
     private String artist;
     private ImageView imageView;
+    private int number;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d("AddPostActivityonCreate", "check" );
         super.onCreate(savedInstanceState);
         setContentView(R.layout.write_post_layout);
         findViewById(R.id.upload).setOnClickListener(onClickListener);
@@ -116,9 +123,11 @@ public class AddPostActivity extends AppCompatActivity {
         final String inputtext = ((EditText) findViewById(R.id.postcontents)).getText().toString();
         final String userprofileimg = userinfo.getProfileimg();
         final String username = userinfo.getUsername();
+        final Timestamp timestamp = new Timestamp(new Date());
+        getPostnumber();
         if(inputtext.length() > 0){
             //사용자프로필사진, 사용자이름, 앨범title, artist, 앨범img, inputtext를 넘겨야함
-            PostFireBase postInfo = new PostFireBase(userprofileimg, username, albumtitle, artist, albumimg, inputtext);
+            PostFireBase postInfo = new PostFireBase(userprofileimg, username, albumtitle, artist, albumimg, inputtext, timestamp, number);
             uploader(postInfo);
         } else{
             startToast("내용을 입력해주세요.");
@@ -126,21 +135,8 @@ public class AddPostActivity extends AppCompatActivity {
     }
 
     private void uploader(PostFireBase postInfo){ //파이어스토어에 작성내용 업로드
-
-        db.collection("mypostlist" + user_uid).add(postInfo) //파이어스토어 postlist 컬렉션에 postInfo 객체에 저장된 게시글내용을 업로드
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Log.d(TAG, "DocumentSnapshot written with ID: " + documentReference.getId());
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error adding documnet", e);
-                    }
-                });
-        db.collection("totalpostlist").add(postInfo) //파이어스토어 postlist 컬렉션에 postInfo 객체에 저장된 게시글내용을 업로드
+        db.collection("totalpostlist").document(user_uid)
+                .collection("myposts").add(postInfo) //파이어스토어 postlist 컬렉션에 postInfo 객체에 저장된 게시글내용을 업로드
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
@@ -159,4 +155,18 @@ public class AddPostActivity extends AppCompatActivity {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
+    private void getPostnumber(){
+        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+        firebaseFirestore.collection("totalpostlist").document(user_uid).collection("mypost")
+                .orderBy("timestamp", Query.Direction.DESCENDING).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()){
+                    number = task.getResult().size() + 1;
+                }else{
+                    Log.d(TAG, "Error getting documents: ", task.getException());
+                }
+            }
+        });
+    }
 }

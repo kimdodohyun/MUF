@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,6 +19,7 @@ import com.example.muf.post.PostFireBase;
 import com.example.muf.post.PostInfoAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -26,6 +28,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -39,9 +42,13 @@ public class Community_frag extends Fragment {
     private ArrayList<PostFireBase> arrayList;
     private FirebaseFirestore firebaseFirestore;
     private PostFireBase postFireBase;
+    private FirebaseAuth firebaseAuth;
+    private String user_uid;
 
     private View view;
     static final String TAG = "HOME";
+    private int flag = -1;
+    private TextView No_textview, Set_textview;
 
     public static Community_frag newinstance(){
         return new Community_frag();
@@ -54,14 +61,27 @@ public class Community_frag extends Fragment {
 
         view.findViewById(R.id.Go_write_post).setOnClickListener(onClickListener);
 
+        No_textview = view.findViewById(R.id.No_zone_inhome);
+        Set_textview = view.findViewById(R.id.view_myzone_inhome);
+        if(getArguments() != null){
+            Bundle bundle = getArguments();
+            flag = bundle.getInt("flag", -1);
+            if(flag == 1){ //Zone이 설정 된 경우
+                No_textview.setVisibility(View.INVISIBLE);
+                Set_textview.setVisibility(View.VISIBLE);
+            }
+        }
+
         recyclerView = view.findViewById(R.id.recyclerView); //community_layout의 recyclerview 아이디 연결
         recyclerView.setHasFixedSize(true); //리사이클러뷰 기존성능 강화
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         arrayList = new ArrayList<>(); //PostFireBase 객체를 담을 어레이 리스트(어댑터쪽으로)
         postFireBase = new PostFireBase();
+        user_uid = FirebaseAuth.getInstance().getUid();
         firebaseFirestore = FirebaseFirestore.getInstance();
-        firebaseFirestore.collection("totalpostlist").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        firebaseFirestore.collection("totalpostlist")
+                .orderBy("timestamp", Query.Direction.DESCENDING).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if(task.isSuccessful()){

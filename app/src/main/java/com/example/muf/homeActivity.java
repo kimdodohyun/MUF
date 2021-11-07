@@ -1,33 +1,30 @@
 package com.example.muf;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.muf.music.Music;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
-import com.spotify.android.appremote.api.ImagesApi;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
-import com.spotify.protocol.client.CallResult;
 import com.spotify.protocol.types.Image;
 import com.spotify.protocol.types.Track;
 import com.spotify.sdk.android.auth.AuthorizationClient;
 import com.spotify.sdk.android.auth.AuthorizationRequest;
 import com.spotify.sdk.android.auth.AuthorizationResponse;
-
-import java.util.Locale;
+import com.squareup.picasso.Picasso;
 
 public class homeActivity extends AppCompatActivity {
     public static String AUTH_TOKEN;
@@ -44,6 +41,9 @@ public class homeActivity extends AppCompatActivity {
     private static final String REDIRECT_URI ="com.example.muf://callback";
     private static final int REQUEST_CODE = 1337;
     private SpotifyAppRemote mSpotifyAppRemote;
+    private int flag = -1;
+//    private Home_frag home_frag;
+//    private Community_frag community_frag;
 
 
     @Override
@@ -76,21 +76,22 @@ public class homeActivity extends AppCompatActivity {
                 return true;
             }
         });
-
         frag1 = new Friends_list_frag();
         frag2 = new Chatting_frag();
         frag3 = new Home_frag();
         frag4 = new Community_frag();
         frag5 = new Myprofile_frag();
 
+        Log.d("HomeActivity onCreate", "flagvalue = " + flag +" kimgijeong");
+
         setFrag(2); //첫 프래그먼트 화면 지정
+
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         authSpotify();
-        super.onStart();
         ConnectionParams connectionParams =
                 new ConnectionParams.Builder(CLIENT_ID)
                         .setRedirectUri(REDIRECT_URI)
@@ -115,6 +116,33 @@ public class homeActivity extends AppCompatActivity {
                         // Something went wrong when attempting to connect! Handle errors here
                     }
                 });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d("HomeActivityonResume", "kimgijeong");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d("HomeActivityonPuase", "kimgijeong");
+    }
+
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        SpotifyAppRemote.disconnect(mSpotifyAppRemote);
+        Log.d("HomeActivityonStop", "kimgijeong");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d("HomeActivityonDestroy", "kimgijeong");
     }
 
     private void authSpotify(){
@@ -152,6 +180,25 @@ public class homeActivity extends AppCompatActivity {
                     // Handle other cases
             }
         }
+//        else if (requestCode == 1531 && resultCode == RESULT_OK){
+//            Log.d("HomeActivity", "OnActivityResult kimgijeong");
+//            flag = data.getIntExtra("flag", -1);
+//            if(flag != -1){ //0 : Nozone, 1 : Setzone
+//                home_frag = new Home_frag();
+//                community_frag = new Community_frag();
+//                Bundle bundle = new Bundle();
+//                bundle.putInt("flag", flag);
+//                home_frag.setArguments(bundle);
+//                community_frag.setArguments(bundle);
+//                ft.replace(R.id.main_frame, home_frag); //R.id.home_frag_layout 헤더 사용해야 하는지 확인
+//                Fragment fragment3 = getSupportFragmentManager().findFragmentByTag("first_frag3");
+//                ft.remove(fragment3);
+//                frag3 = home_frag;
+//                Fragment fragment4 = getSupportFragmentManager().findFragmentByTag("first_frag4");
+//                ft.remove(fragment4);
+//                frag4 = community_frag;
+//            }
+//        }
     }
 
     private void connected() {
@@ -190,6 +237,7 @@ public class homeActivity extends AppCompatActivity {
         switch (n) {
             case 0:
                 Log.d(TAG, "setFrag: frag1");
+                //replace로 대체되는 fragment도 onAttach() -> onCreate()로 시작
                 ft.replace(R.id.main_frame, frag1);
                 ft.commit();
                 break;
@@ -200,12 +248,12 @@ public class homeActivity extends AppCompatActivity {
                 break;
             case 2:
                 Log.d(TAG, "setFrag: frag3");
-                ft.replace(R.id.main_frame, frag3);
+                ft.replace(R.id.main_frame, frag3, "frist_frag3");
                 ft.commit();
                 break;
             case 3:
                 Log.d(TAG, "setFrag: frag4");
-                ft.replace(R.id.main_frame, frag4);
+                ft.replace(R.id.main_frame, frag4, "first_frag4");
                 ft.commit();
                 break;
             case 4:
@@ -215,13 +263,6 @@ public class homeActivity extends AppCompatActivity {
                 break;
 
         }
-    }
-
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        SpotifyAppRemote.disconnect(mSpotifyAppRemote);
     }
 
 }

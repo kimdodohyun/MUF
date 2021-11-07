@@ -1,5 +1,7 @@
 package com.example.muf.post;
 
+import com.google.firebase.Timestamp;
+
 //사용자프로필사진, 사용자이름, 앨범title, 앨범img, inputtext를 넘겨야함
 public class PostFireBase {
     private String profileimg;
@@ -8,17 +10,28 @@ public class PostFireBase {
     private String artis;
     private String albumimg;
     private String inputtext;
+    private Timestamp timestamp;
+    private int postnumber;
 
     public  PostFireBase(){}
 
-    public PostFireBase(String Profileimg, String Username, String Albumtitle, String Artist, String Albumimg, String Inputtext){
+    public PostFireBase(String Profileimg, String Username, String Albumtitle, String Artist,
+                        String Albumimg, String Inputtext, Timestamp Timestamp, int Postnumber){
         this.profileimg = Profileimg;
         this.username = Username;
         this.albumtitle = Albumtitle;
         this.artis = Artist;
         this.albumimg = Albumimg;
         this.inputtext = Inputtext;
+        this.timestamp = Timestamp;
+        this.postnumber = Postnumber;
     }
+
+    public int getPostnumber() { return postnumber; }
+    public void setPostnumber(int postnumber) { this.postnumber = postnumber; }
+
+    public Timestamp getTimestamp() { return timestamp; }
+    public void setTimestamp(Timestamp timestamp) { this.timestamp = timestamp; }
 
     public String getProfileimg() { return profileimg; }
     public void setProfileimg(String profileimg) { this.profileimg = profileimg; }

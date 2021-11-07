@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.example.muf.SetZone.SetZoneActivity;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
+import com.facebook.CustomTabMainActivity;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginResult;
@@ -32,11 +33,19 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
-    private Button btnKakao;
     private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
     private static final int RC_SIGN_IN = 9001;
     private GoogleSignInClient googleSignInClient; // 구글 gso
     private CallbackManager callbackManager; // 페이스북 콜백 메니저
@@ -50,10 +59,10 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         btnGoogle = findViewById(R.id.btnGoogleLogin);
-        btnKakao = findViewById(R.id.btnKakaoLogin);
 
         mAuth=FirebaseAuth.getInstance();
         if (mAuth.getCurrentUser() != null) {
+            Log.d(TAG, "onCreate: "+mAuth.getCurrentUser().getEmail());
             Intent intent = new Intent(getApplication(), homeActivity.class);
             startActivity(intent);
             finish();
@@ -91,13 +100,6 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onError(FacebookException error) {
-
-            }
-        });
-
-        btnKakao.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
             }
         });
@@ -166,9 +168,30 @@ public class LoginActivity extends AppCompatActivity {
 
     private void updateUI(FirebaseUser user){ // 로그인 성공시 화면 전환
         if(user!=null){
-            Intent intent = new Intent(this, homeActivity.class);
-            startActivity(intent);
-            finish();
+            db = FirebaseFirestore.getInstance();
+            db.collection("Users").document(mAuth.getUid()).get()
+                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if(task.isSuccessful()){
+                                DocumentSnapshot doc = task.getResult();
+                                if(doc.exists()){
+                                    Intent intent = new Intent(getApplicationContext(), homeActivity.class);
+                                    startActivity(intent);
+                                    finish();
+                                }
+                                else{
+                                    Intent intent = new Intent(getApplicationContext(), SettingUserActivity.class);
+                                    intent.putExtra("uid",mAuth.getUid());
+                                    startActivity(intent);
+                                    finish();
+                                }
+                            }
+                            else{
+                                Log.d(TAG, "get failed with " + task.getException());
+                            }
+                        }
+                    });
         }
     }
 }

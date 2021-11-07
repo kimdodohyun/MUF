@@ -103,7 +103,6 @@ public class Community_frag extends Fragment {
     View.OnClickListener onClickListener = (v) -> {
         switch (v.getId()){
             case R.id.Go_write_post:
-                //Fragment_to_Activity
                 Intent intent = new Intent(getActivity(), AddPostActivity.class);
                 startActivity(intent);
                 break;

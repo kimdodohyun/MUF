@@ -25,6 +25,9 @@
             android:name=".SetZone.SetZoneActivity"
             android:exported="false" />
         <activity
+            android:name=".SettingUserActivity"
+            android:exported="true" />
+        <activity
             android:name=".SearchActivity"
             android:exported="true" />
         <!--
@@ -77,6 +80,7 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
+    <activity android:name="ProfileEditActivity" />
     </application>
 
 </manifest>

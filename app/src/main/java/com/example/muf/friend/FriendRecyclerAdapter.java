@@ -1,6 +1,8 @@
 package com.example.muf.friend;
 
+import android.content.Context;
 import android.media.Image;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.muf.R;
 import com.example.muf.homeActivity;
 import com.example.muf.model.UserModel;
+import com.example.muf.post.PostInfoAdapter;
 import com.squareup.picasso.Picasso;
 
 import java.awt.font.TextAttribute;
@@ -25,6 +28,12 @@ import kaaes.spotify.webapi.android.models.Track;
 
 public class FriendRecyclerAdapter extends RecyclerView.Adapter<FriendRecyclerAdapter.ViewHolder> {
     private ArrayList<UserModel> friendList;
+    private Context context;
+
+    public FriendRecyclerAdapter(ArrayList<UserModel> friendList, Context context){
+        this.friendList = friendList;
+        this.context = context;
+    }
 
     @NonNull
     @Override
@@ -37,11 +46,6 @@ public class FriendRecyclerAdapter extends RecyclerView.Adapter<FriendRecyclerAd
     @Override
     public void onBindViewHolder(@NonNull FriendRecyclerAdapter.ViewHolder holder, int position) {
         holder.onBind(friendList.get(position));
-    }
-
-    public void setFriendList(ArrayList<UserModel> list){
-        this.friendList = list;
-        notifyDataSetChanged();;
     }
 
     @Override
@@ -70,8 +74,11 @@ public class FriendRecyclerAdapter extends RecyclerView.Adapter<FriendRecyclerAd
             if(item.getProfileMusicUrl()!=null) {
                 SpotifyApi spotifyApi = new SpotifyApi();
                 spotifyApi.setAccessToken(homeActivity.AUTH_TOKEN);
-                Track track = spotifyApi.getService().getTrack(item.getProfileMusicUrl());
+                String[]  parse = item.getProfileMusicUrl().split(":");
+                Log.d("getTrack", "music uri : " +parse[2]);
+                Track track = spotifyApi.getService().getTrack(parse[2]);
                 profileMusic.setText(track.artists.get(0).name + " - " + track.name);
+                profileMusic.setSelected(true);
             }
 
         }

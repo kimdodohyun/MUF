@@ -8,6 +8,7 @@ public class UserModel {
     private String profileMusicUrl;
     private String uid;
 
+    public UserModel(){}
     public UserModel(String nickName, String profileImageUrl, String profileMusicUrl, String uid) {
         this.nickName = nickName;
         this.profileImageUrl = profileImageUrl;

@@ -7,26 +7,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <LinearLayout
-        android:background="#AAB4DF"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/home_title"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="MUF"
-            android:textSize="34sp" />
-
-        <ImageView
-            android:id="@+id/imageView3"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            app:srcCompat="@drawable/ic_baseline_music_note_24" />
-
-    </LinearLayout>
     <TextView
         android:id="@+id/my_zone"
         android:layout_marginTop="10dp"

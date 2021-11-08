@@ -94,6 +94,7 @@ public class Community_frag extends Fragment {
                         postFireBase = document.toObject(PostFireBase.class);
                         arrayList.add(postFireBase);
                     }
+                    Log.d(TAG, "size" +arrayList.size());
                     adapter.notifyDataSetChanged();
                 }else{
                     Log.d(TAG, "Error getting documents: ", task.getException());

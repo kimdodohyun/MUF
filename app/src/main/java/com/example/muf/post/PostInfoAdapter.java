@@ -35,9 +35,11 @@ public class PostInfoAdapter extends RecyclerView.Adapter<PostInfoAdapter.PostIn
 
     @Override
     public void onBindViewHolder(@NonNull PostInfoViewHolder holder, int position) {
-        Glide.with(holder.itemView)
-                .load(arrayList.get(position).getProfileimg()) //ProfileImage
-                .into(holder.iv_profile);
+        if(arrayList.get(position).getProfileimg() != null) {
+            Glide.with(holder.itemView)
+                    .load(arrayList.get(position).getProfileimg()) //ProfileImage
+                    .into(holder.iv_profile);
+        }
         holder.tv_usernickname.setText(arrayList.get(position).getUsername()); //UserName
         holder.tv_albumtitle.setText(arrayList.get(position).getAlbumtitle()); //AlbumTitle
         holder.tv_artist.setText(arrayList.get(position).getArtis()); //Artist

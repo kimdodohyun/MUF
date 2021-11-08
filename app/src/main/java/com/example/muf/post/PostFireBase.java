@@ -12,10 +12,11 @@ public class PostFireBase {
     private String inputtext;
     private Timestamp timestamp;
     private String uid;
+    private String uri;
     public  PostFireBase(){}
 
     public PostFireBase(String Profileimg, String Username, String Albumtitle, String Artist,
-                        String Albumimg, String Inputtext, Timestamp Timestamp, String Uid){
+                        String Albumimg, String Inputtext, Timestamp Timestamp, String Uid, String Uri){
         this.profileimg = Profileimg;
         this.username = Username;
         this.albumtitle = Albumtitle;
@@ -24,7 +25,10 @@ public class PostFireBase {
         this.inputtext = Inputtext;
         this.timestamp = Timestamp;
         this.uid = Uid;
+        this.uri = Uri;
     }
+
+    public String getUri() { return uri; }
 
     public String getUid() { return uid; }
     public void setUid(String uid) { this.uid = uid;}

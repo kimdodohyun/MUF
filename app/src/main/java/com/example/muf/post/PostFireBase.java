@@ -7,7 +7,7 @@ public class PostFireBase {
     private String profileimg;
     private String username;
     private String albumtitle;
-    private String artis;
+    private String artist;
     private String albumimg;
     private String inputtext;
     private Timestamp timestamp;
@@ -20,7 +20,7 @@ public class PostFireBase {
         this.profileimg = Profileimg;
         this.username = Username;
         this.albumtitle = Albumtitle;
-        this.artis = Artist;
+        this.artist = Artist;
         this.albumimg = Albumimg;
         this.inputtext = Inputtext;
         this.timestamp = Timestamp;
@@ -51,6 +51,6 @@ public class PostFireBase {
     public String getInputtext() { return inputtext; }
     public void setInputtext(String inputtext) { this.inputtext = inputtext; }
 
-    public String getArtis() { return artis; }
-    public void setArtis(String artis) { this.artis = artis; }
+    public String getArtis() { return artist; }
+    public void setArtis(String artis) { this.artist = artis; }
 }

@@ -42,12 +42,16 @@
         android:visibility="invisible"
         app:layout_constraintBaseline_toBaselineOf="@+id/No_zone_incommunity"
         app:layout_constraintStart_toStartOf="@+id/my_zone_incomunity" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/No_zone_incommunity" />
+        app:layout_constraintTop_toBottomOf="@id/No_zone_incommunity">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <ImageButton
         android:id="@+id/Go_write_post"

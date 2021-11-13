@@ -29,7 +29,7 @@ public class homeActivity extends AppCompatActivity {
     public static String AUTH_TOKEN;
     static final String TAG = "HOME";
     private BottomNavigationView bottomNavigationView;
-    private FragmentManager fm;
+    public static FragmentManager fm;
     private FragmentTransaction ft;
     private Friends_list_frag frag1;
     private Chatting_frag frag2;

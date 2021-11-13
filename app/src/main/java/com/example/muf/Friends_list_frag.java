@@ -1,5 +1,6 @@
 package com.example.muf;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.muf.friend.FriendRecyclerAdapter;
+import com.example.muf.friend.OnItemClickEventListener;
 import com.example.muf.model.UserModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -75,6 +77,16 @@ public class Friends_list_frag extends Fragment {
 
         adapter = new FriendRecyclerAdapter(friendList,getActivity().getApplicationContext());
         recyclerView.setAdapter(adapter);
+
+        adapter.setOnItemClickListener(new OnItemClickEventListener() {
+            @Override
+            public void onItemClick(FriendRecyclerAdapter.ViewHolder holder, View view, int pos) {
+                UserModel item = adapter.getItem(pos);
+                Intent intent = new Intent(view.getContext(), ChatActivity.class);
+                intent.putExtra("destinationUid",friendList.get(pos).getUid());
+                startActivity(intent);
+            }
+        });
 
         return view;
     }

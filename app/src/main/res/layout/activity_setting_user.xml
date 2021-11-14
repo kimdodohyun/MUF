@@ -6,6 +6,27 @@
     android:layout_height="match_parent"
     android:background="@color/mainTheme"
     tools:context=".SettingUserActivity">
+    <LinearLayout
+        android:background="#AAB4DF"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/home_title"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="MUF"
+            android:textSize="34sp" />
+
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:srcCompat="@drawable/ic_baseline_music_note_24" />
+
+    </LinearLayout>
 
     <ImageView
         android:id="@+id/img_profile"
@@ -16,7 +37,7 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="100dp"
         android:scaleType="centerCrop"
-        app:srcCompat="@drawable/ic_baseline_account_circle_24"/>
+        app:srcCompat="@drawable/ic_baseline_portrait_24"/>
 
     <Button
         android:id="@+id/btn_imgSetting"

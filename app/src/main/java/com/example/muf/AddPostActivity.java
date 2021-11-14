@@ -37,10 +37,10 @@ public class AddPostActivity extends AppCompatActivity {
     private String albumtitle;
     private String albumimg;
     private String artist;
+    private String uri;
     private ImageView imageView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d("AddPostActivityonCreate", "check" );
         super.onCreate(savedInstanceState);
         setContentView(R.layout.write_post_layout);
         findViewById(R.id.upload).setOnClickListener(onClickListener);
@@ -87,6 +87,7 @@ public class AddPostActivity extends AppCompatActivity {
             albumimg = selected_music.getImg_uri();
             albumtitle = selected_music.getTitle();
             artist = selected_music.getArtist_name();
+            uri = selected_music.getUri();
             Picasso.get().load(albumimg).into(imageView);
             imageView.setVisibility(View.VISIBLE);
         }
@@ -100,7 +101,7 @@ public class AddPostActivity extends AppCompatActivity {
 
         if(inputtext.length() > 0){
             //사용자프로필사진, 사용자이름, 앨범title, artist, 앨범img, inputtext를 넘겨야함
-            PostFireBase postInfo = new PostFireBase(userprofileimg, username, albumtitle, artist, albumimg, inputtext, timestamp, user_uid);
+            PostFireBase postInfo = new PostFireBase(userprofileimg, username, albumtitle, artist, albumimg, inputtext, timestamp, user_uid, uri);
             uploader(postInfo);
         } else{
             startToast("내용을 입력해주세요.");

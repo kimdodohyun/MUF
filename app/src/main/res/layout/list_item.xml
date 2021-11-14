@@ -16,7 +16,8 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_margin="5dp"
-            app:srcCompat="@drawable/ic_launcher_background"
+            app:srcCompat="@drawable/ic_baseline_portrait_24"
+            android:scaleType="centerCrop"
             android:contentDescription="@string/basic_profile_picture" />
 
         <TextView

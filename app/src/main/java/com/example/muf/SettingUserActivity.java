@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.example.muf.model.UserModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -78,14 +79,10 @@ public class SettingUserActivity extends AppCompatActivity {
                             final Task<Uri> image_url = task.getResult().getStorage().getDownloadUrl();
                             while(!image_url.isComplete());
 
-                            HashMap<Object,String> hashMap = new HashMap<>();
+                            UserModel user = new UserModel(et_nickname.getText().toString(), image_url.getResult().toString(),
+                                    null,uid);
 
-                            hashMap.put("uid",uid);
-                            hashMap.put("nickname",et_nickname.getText().toString());
-                            hashMap.put("imageUrl",image_url.getResult().toString());
-                            hashMap.put("profileMusicUrl" , null);
-
-                            mDatabase.collection("Users").document(uid).set(hashMap)
+                            mDatabase.collection("Users").document(uid).set(user)
                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void unused) {
@@ -106,14 +103,10 @@ public class SettingUserActivity extends AppCompatActivity {
                     });
                 }
                 else{
-                    HashMap<Object,String> hashMap = new HashMap<>();
+                    UserModel user = new UserModel(et_nickname.getText().toString(), null,
+                            null,uid);
 
-                    hashMap.put("uid",uid);
-                    hashMap.put("nickname",et_nickname.getText().toString());
-                    hashMap.put("imageUrl",null);
-                    hashMap.put("profileMusicUrl" , null);
-
-                    mDatabase.collection("Users").document(uid).set(hashMap)
+                    mDatabase.collection("Users").document(uid).set(user)
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {

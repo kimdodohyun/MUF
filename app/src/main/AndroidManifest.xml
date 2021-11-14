@@ -6,9 +6,8 @@
          Google Maps Android API v2, but you must specify either coarse or fine
          location permissions for the "MyLocation" functionality.
     -->
-    <!--Network IP 기반 위치정보 권한 -->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <!--GPS 기반 위치정보 권한 -->
+    <!-- Network IP 기반 위치정보 권한 -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- GPS 기반 위치정보 권한 -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -21,6 +20,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar"
         android:usesCleartextTraffic="true">
+        <activity
+            android:name=".ChatActivity"
+            android:exported="true" />
         <activity
             android:name=".SetZone.SetZoneActivity"
             android:exported="false" />
@@ -80,7 +82,7 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-    <activity android:name="ProfileEditActivity" />
+        <activity android:name=".ProfileEditActivity" />
     </application>
 
 </manifest>

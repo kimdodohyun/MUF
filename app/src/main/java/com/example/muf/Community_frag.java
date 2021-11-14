@@ -1,5 +1,7 @@
 package com.example.muf;
 
+import static com.example.muf.homeActivity.fm;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.muf.post.Contents;
 import com.example.muf.post.PostFireBase;
@@ -47,7 +50,7 @@ public class Community_frag extends Fragment {
     private PostFireBase postFireBase;
     private FirebaseAuth firebaseAuth;
     private String user_uid;
-
+    private SwipeRefreshLayout swipeRefreshLayout;
     private View view;
     static final String TAG = "HOME";
     private int flag = -1;
@@ -61,7 +64,20 @@ public class Community_frag extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.community_layout, container, false);
+        swipeRefreshLayout = view.findViewById(R.id.swipe);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadFromDB();
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+        return view;
+    }
 
+    @Override
+    public void onStart() {
+        super.onStart();
         view.findViewById(R.id.Go_write_post).setOnClickListener(onClickListener);
 
         No_textview = view.findViewById(R.id.No_zone_incommunity);
@@ -102,7 +118,6 @@ public class Community_frag extends Fragment {
         });
         adapter = new PostInfoAdapter(arrayList, getActivity().getApplicationContext());
         recyclerView.setAdapter(adapter); //리사이클러뷰에 어댑터 연결
-        return view;
     }
 
     View.OnClickListener onClickListener = (v) -> {
@@ -113,4 +128,25 @@ public class Community_frag extends Fragment {
                 break;
         }
     };
+
+    public void loadFromDB(){
+        arrayList.clear();
+        firebaseFirestore.collection("TotalPostLists").orderBy("timestamp", Query.Direction.DESCENDING)
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()){
+                    for(QueryDocumentSnapshot document : task.getResult()){
+                        postFireBase = document.toObject(PostFireBase.class);
+                        arrayList.add(postFireBase);
+                    }
+                    adapter.notifyDataSetChanged();
+                }else{
+                    Log.d(TAG, "Error getting documents: ", task.getException());
+                }
+            }
+        });
+        recyclerView.setAdapter(adapter);
+    }
+
 }

@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,7 +29,7 @@ public class homeActivity extends AppCompatActivity {
     public static String AUTH_TOKEN;
     static final String TAG = "HOME";
     private BottomNavigationView bottomNavigationView;
-    private FragmentManager fm;
+    public static FragmentManager fm;
     private FragmentTransaction ft;
     private Friends_list_frag frag1;
     private Chatting_frag frag2;
@@ -45,6 +46,9 @@ public class homeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        if (android.os.Build.VERSION.SDK_INT > 9) { StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build(); StrictMode.setThreadPolicy(policy); }
+
 
         bottomNavigationView = findViewById(R.id.bottom_navi);
         bottomNavigationView.setSelectedItemId(R.id.main_home);
@@ -71,6 +75,7 @@ public class homeActivity extends AppCompatActivity {
                 return true;
             }
         });
+
         frag1 = new Friends_list_frag();
         frag2 = new Chatting_frag();
         frag3 = new Home_frag();
@@ -113,31 +118,6 @@ public class homeActivity extends AppCompatActivity {
                         // Something went wrong when attempting to connect! Handle errors here
                     }
                 });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d("HomeActivityonResume", "kimgijeong");
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.d("HomeActivityonPuase", "kimgijeong");
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        SpotifyAppRemote.disconnect(mSpotifyAppRemote);
-        Log.d("HomeActivityonStop", "kimgijeong");
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.d("HomeActivityonDestroy", "kimgijeong");
     }
 
     private void authSpotify(){
@@ -223,33 +203,34 @@ public class homeActivity extends AppCompatActivity {
         ft = fm.beginTransaction();
         switch (n) {
             case 0:
-                Log.d(TAG, "setFrag: frag1");
-                //replace로 대체되는 fragment도 onAttach() -> onCreate()로 시작
                 ft.replace(R.id.main_frame, frag1);
                 ft.commit();
                 break;
             case 1:
-                Log.d(TAG, "setFrag: frag2");
                 ft.replace(R.id.main_frame, frag2);
                 ft.commit();
                 break;
             case 2:
-                Log.d(TAG, "setFrag: frag3");
-                ft.replace(R.id.main_frame, frag3, "frist_frag3");
+                ft.replace(R.id.main_frame, frag3);
                 ft.commit();
                 break;
             case 3:
-                Log.d(TAG, "setFrag: frag4");
-                ft.replace(R.id.main_frame, frag4, "first_frag4");
+                ft.replace(R.id.main_frame, frag4);
                 ft.commit();
                 break;
             case 4:
-                Log.d(TAG, "setFrag: frag5");
                 ft.replace(R.id.main_frame, frag5);
                 ft.commit();
                 break;
 
         }
+    }
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        SpotifyAppRemote.disconnect(mSpotifyAppRemote);
     }
 
 }

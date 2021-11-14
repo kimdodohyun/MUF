@@ -5,15 +5,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.accessibilityservice.AccessibilityService;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.muf.model.ChatModel;
 import com.example.muf.model.UserModel;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -25,7 +30,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,16 +43,28 @@ public class ChatActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private UserModel myInfo;
     private UserModel friendInfo;
+    public List<ChatModel.Comment> comments;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+        comments = new ArrayList<>();
         destinationUid = getIntent().getStringExtra("destinationUid");
         uid = FirebaseAuth.getInstance().getUid();
         btn_send = findViewById(R.id.btn_send);
         et_message = findViewById(R.id.et_message);
         myInfo = new UserModel();
         friendInfo = new UserModel();
+
+        SoftKeyboardDectectorView softKeyboardDectectorView = new SoftKeyboardDectectorView(this);
+        addContentView(softKeyboardDectectorView,new FrameLayout.LayoutParams(-1,-1));
+
+        softKeyboardDectectorView.setOnShownKeyboard(new SoftKeyboardDectectorView.OnShownKeyboardListener() {
+            @Override
+            public void onShowSoftKeyboard() {
+                recyclerView.scrollToPosition(comments.size()-1);
+            }
+        });
 
         FirebaseFirestore.getInstance().collection("Users").document(uid).get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -71,19 +87,11 @@ public class ChatActivity extends AppCompatActivity {
         btn_send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ChatModel chat = new ChatModel();
-                chat.users.put(uid,true);
-                chat.users.put(destinationUid,true);
+                ChatModel.Comment comment = new ChatModel.Comment();
+                comment.uid = uid;
+                comment.message = et_message.getText().toString();
+                FirebaseDatabase.getInstance().getReference().child("ChatRooms").child(chatRoomId).child("comments").push().setValue(comment);
 
-                if(chatRoomId == null) {
-                    FirebaseDatabase.getInstance().getReference().child("ChatRooms").push().setValue(chat);
-                }
-                else{
-                    ChatModel.Comment comment = new ChatModel.Comment();
-                    comment.uid = uid;
-                    comment.message = et_message.getText().toString();
-                    FirebaseDatabase.getInstance().getReference().child("ChatRooms").child(chatRoomId).child("comments").push().setValue(comment);
-                }
                 et_message.setText("");
             }
         });
@@ -95,14 +103,22 @@ public class ChatActivity extends AppCompatActivity {
             .addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    int flag = 0;
                     for(DataSnapshot item : snapshot.getChildren()){
                         ChatModel chatModel = item.getValue(ChatModel.class);
-                        if(chatModel.users.containsKey(destinationUid)){
+                        if(chatModel.users.containsKey(destinationUid) && chatModel.users.size() == 2){
                             chatRoomId = item.getKey();
-                            btn_send.setEnabled(true);
+                            flag = 1;
                             recyclerView.setLayoutManager(new LinearLayoutManager(ChatActivity.this));
                             recyclerView.setAdapter(new RecyclerViewAdapter());
                         }
+                    }
+                    if(flag == 0){
+                        ChatModel newRoom = new ChatModel();
+                        newRoom.users.put(uid, true);
+                        newRoom.users.put(destinationUid, true);
+                        FirebaseDatabase.getInstance().getReference().child("ChatRooms").push().setValue(newRoom);
+                        checkChatRoom();
                     }
                 }
 
@@ -114,9 +130,9 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
-        List<ChatModel.Comment> comments;
+       // List<ChatModel.Comment> comments;
         public RecyclerViewAdapter() {
-            comments = new ArrayList<>();
+         //   comments = new ArrayList<>();
 
             FirebaseDatabase.getInstance().getReference().child("ChatRooms").child(chatRoomId).child("comments")
                     .addValueEventListener(new ValueEventListener() {
@@ -127,6 +143,7 @@ public class ChatActivity extends AppCompatActivity {
                                 comments.add(item.getValue(ChatModel.Comment.class));
                             }
                             notifyDataSetChanged();
+                            recyclerView.scrollToPosition(comments.size()-1);
                         }
 
                         @Override
@@ -161,14 +178,14 @@ public class ChatActivity extends AppCompatActivity {
                 ((MessageViewHolder) holder).tv_message_my.setText(comments.get(position).message);
                 ((MessageViewHolder) holder).tv_chatName_my.setText(myInfo.getNickName());
                 if(myInfo.getProfileImageUrl() != null){
-                    Picasso.get().load(myInfo.getProfileImageUrl()).into(((MessageViewHolder) holder).img_chatProfile_my);
+                    Glide.with(holder.itemView.getContext()).load(myInfo.getProfileImageUrl()).into(((MessageViewHolder) holder).img_chatProfile_my);
                 }
             }
             else{
                 ((MessageViewHolder) holder).tv_message_friend.setText(comments.get(position).message);
                 ((MessageViewHolder) holder).tv_chatName_friend.setText(friendInfo.getNickName());
                 if(friendInfo.getProfileImageUrl() != null){
-                    Picasso.get().load(friendInfo.getProfileImageUrl()).into(((MessageViewHolder) holder).img_chatProfile_friend);
+                    Glide.with(holder.itemView.getContext()).load(friendInfo.getProfileImageUrl()).into(((MessageViewHolder) holder).img_chatProfile_friend);
                 }
             }
         }

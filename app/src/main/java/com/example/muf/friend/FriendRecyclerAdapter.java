@@ -98,7 +98,6 @@ public class FriendRecyclerAdapter extends RecyclerView.Adapter<FriendRecyclerAd
                 SpotifyApi spotifyApi = new SpotifyApi();
                 spotifyApi.setAccessToken(homeActivity.AUTH_TOKEN);
                 String[]  parse = item.getProfileMusicUrl().split(":");
-                Log.d("getTrack", "music uri : " +parse[2]);
                 Track track = spotifyApi.getService().getTrack(parse[2]);
                 profileMusic.setText(track.artists.get(0).name + " - " + track.name);
                 profileMusic.setSelected(true);

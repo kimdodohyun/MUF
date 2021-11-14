@@ -11,6 +11,7 @@ import android.os.StrictMode;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -41,7 +42,9 @@ public class homeActivity extends AppCompatActivity {
     private static final String REDIRECT_URI ="com.example.muf://callback";
     private static final int REQUEST_CODE = 1337;
     public SpotifyAppRemote mSpotifyAppRemote;
-
+    private ImageButton btn_play;
+    private ImageButton btn_previous;
+    private ImageButton btn_next;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +52,9 @@ public class homeActivity extends AppCompatActivity {
 
         if (android.os.Build.VERSION.SDK_INT > 9) { StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build(); StrictMode.setThreadPolicy(policy); }
 
+        btn_play = findViewById(R.id.btn_play);
+        btn_previous = findViewById(R.id.btn_previous);
+        btn_next = findViewById(R.id.btn_next);
 
         bottomNavigationView = findViewById(R.id.bottom_navi);
         bottomNavigationView.setSelectedItemId(R.id.main_home);
@@ -87,7 +93,33 @@ public class homeActivity extends AppCompatActivity {
             startActivityForResult(intent, 1531);
         }
 
-        Log.d("HomeActivity onCreate", "flagvalue = " + flag +" kimgijeong");
+        btn_next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mSpotifyAppRemote.getPlayerApi().skipNext();
+            }
+        });
+
+        btn_previous.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mSpotifyAppRemote.getPlayerApi().skipPrevious();
+            }
+        });
+
+        btn_play.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mSpotifyAppRemote.getPlayerApi().getPlayerState().setResultCallback(playerState -> {
+                    if(playerState.isPaused){
+                        mSpotifyAppRemote.getPlayerApi().resume();
+                    }
+                    else{
+                        mSpotifyAppRemote.getPlayerApi().pause();
+                    }
+                });
+            }
+        });
     }
 
     @Override
@@ -172,6 +204,12 @@ public class homeActivity extends AppCompatActivity {
         mSpotifyAppRemote.getPlayerApi()
                 .subscribeToPlayerState()
                 .setEventCallback(playerState -> {
+                    if(playerState.isPaused){
+                        btn_play.setImageResource(R.drawable.ic_baseline_play_arrow_24);
+                    }
+                    else{
+                        btn_play.setImageResource(R.drawable.ic_baseline_pause_24);
+                    }
                     final Track track = playerState.track;
                     if (track != null) {
                         TextView tv_title = findViewById(R.id.title_txt);
@@ -179,6 +217,8 @@ public class homeActivity extends AppCompatActivity {
                         ImageView img_track = findViewById(R.id.album_img);
                         tv_title.setText(track.name);
                         tv_artist.setText(track.artist.name);
+                        tv_title.setSelected(true);
+                        tv_artist.setSelected(true);
                         mSpotifyAppRemote
                                 .getImagesApi()
                                 .getImage(track.imageUri, Image.Dimension.LARGE)
@@ -186,7 +226,6 @@ public class homeActivity extends AppCompatActivity {
                                         bitmap -> {
                                             img_track.setImageBitmap(bitmap);
                                         });
-                        Log.d("MainActivity", track.name + " by " + track.artist.name);
                     }
                     else{
                         TextView tv_title = findViewById(R.id.title_txt);
@@ -226,11 +265,9 @@ public class homeActivity extends AppCompatActivity {
         }
     }
 
-
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onDestroy() {
+        super.onDestroy();
         SpotifyAppRemote.disconnect(mSpotifyAppRemote);
     }
-
 }

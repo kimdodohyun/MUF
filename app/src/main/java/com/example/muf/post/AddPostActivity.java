@@ -1,4 +1,4 @@
-package com.example.muf;
+package com.example.muf.post;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,9 +10,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.muf.R;
+import com.example.muf.SearchActivity;
 import com.example.muf.model.UserModel;
 import com.example.muf.music.Music;
-import com.example.muf.post.PostFireBase;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -39,6 +40,7 @@ public class AddPostActivity extends AppCompatActivity {
     private String artist;
     private String uri;
     private ImageView imageView;
+    private String locationenglishname;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,7 +49,8 @@ public class AddPostActivity extends AppCompatActivity {
         findViewById(R.id.search_music).setOnClickListener(onClickListener);
         userinfo = new UserModel();
         imageView = findViewById(R.id.search_result_img);
-
+        Intent intent = getIntent();
+        locationenglishname = intent.getStringExtra("englishname");
         //파이어스토어에서 현재 user의 userinfo 가져오기
         DocumentReference docRef = db.collection("Users").document(user_uid);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -68,7 +71,7 @@ public class AddPostActivity extends AppCompatActivity {
         public void onClick(View v) {
             switch(v.getId()){
                 case R.id.upload:
-                    postUpdate();
+                    postUpdate(locationenglishname);
                     finish();
                     break;
                 case R.id.search_music:
@@ -93,23 +96,25 @@ public class AddPostActivity extends AppCompatActivity {
         }
     }
 
-    private void postUpdate(){
+    private void postUpdate(String Locationname){
         final String inputtext = ((EditText) findViewById(R.id.postcontents)).getText().toString();
         final String userprofileimg = userinfo.getProfileImageUrl();
         final String username = userinfo.getNickName();
         final Timestamp timestamp = new Timestamp(new Date());
+        final String placename = Locationname;
 
         if(inputtext.length() > 0){
             //사용자프로필사진, 사용자이름, 앨범title, artist, 앨범img, inputtext를 넘겨야함
             PostFireBase postInfo = new PostFireBase(userprofileimg, username, albumtitle, artist, albumimg, inputtext, timestamp, user_uid, uri);
-            uploader(postInfo);
+            uploader(postInfo, placename);
         } else{
             startToast("내용을 입력해주세요.");
         }
     }
 
-    private void uploader(PostFireBase postInfo){ //파이어스토어에 작성내용 업로드
-        db.collection("TotalPostLists").add(postInfo) //파이어스토어 postlist 컬렉션에 postInfo 객체에 저장된 게시글내용을 업로드
+    private void uploader(PostFireBase postInfo, String Locationname){ //파이어스토어에 작성내용 업로드
+        Log.d(TAG, "uploader: " + locationenglishname);
+        db.collection(Locationname + "PostLists").add(postInfo) //파이어스토어 해당 장소PostLists 컬렉션에 postInfo 객체에 저장된 게시글내용을 업로드
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {

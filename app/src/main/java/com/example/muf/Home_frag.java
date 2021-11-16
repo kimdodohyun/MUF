@@ -20,6 +20,7 @@ public class Home_frag extends Fragment {
     private View view;
     private TextView No_textview, Set_textview;
     private int flag = -1;
+    private String locationname;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -34,15 +35,6 @@ public class Home_frag extends Fragment {
         No_textview = view.findViewById(R.id.No_zone_inhome);
         Set_textview = view.findViewById(R.id.view_myzone_inhome);
         Log.d("HomeFrag onCreateView", "kimgijeong");
-        if(getArguments() != null){ //HomeActivity에서 bundle받기
-            Bundle bundle = getArguments();
-            flag = bundle.getInt("flag");
-            Log.d("HomeFrag onCreateView", "flagvalue = " + flag +" kimgijeong");
-            if(flag == 1){ //Zone이 설정 된 경우
-                No_textview.setVisibility(View.INVISIBLE);
-                Set_textview.setVisibility(View.VISIBLE);
-            }
-        }
         return view;
     }
 
@@ -55,6 +47,21 @@ public class Home_frag extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        if(getArguments() != null){ //HomeActivity에서 bundle받기
+            Bundle bundle = getArguments();
+            flag = bundle.getInt("flag");
+            locationname = bundle.getString("name");
+            Log.d("HomeFrag onCreateView", "flagvalue = " + flag +" kimgijeong");
+            if(flag == 1){ //Zone이 설정 된 경우
+                No_textview.setVisibility(View.INVISIBLE);
+                Set_textview.setText(locationname);
+                Set_textview.setVisibility(View.VISIBLE);
+            }
+            else if(flag == 0){
+                No_textview.setVisibility(View.VISIBLE);
+                Set_textview.setVisibility(View.INVISIBLE);
+            }
+        }
 
         Log.d("onStart", "No_textview : " + No_textview.getVisibility() );
         Log.d("HomeFrag onStart", "flagvalue = " + flag +" kimgijeong");

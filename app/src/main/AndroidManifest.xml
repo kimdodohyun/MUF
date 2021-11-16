@@ -24,6 +24,13 @@
             android:name=".ChatActivity"
             android:exported="true" />
         <activity
+            android:name=".SetZone.LocationListPopUpActivity"
+            android:theme="@android:style/Theme.Dialog"
+            android:exported="false" />
+        <activity
+            android:name=".ChatActivity"
+            android:exported="true" />
+        <activity
             android:name=".SetZone.SetZoneActivity"
             android:exported="false" />
         <activity
@@ -45,11 +52,7 @@
             android:value="AIzaSyBWhUlWrr3R1CmhC-gXgAJs0APLOmxflZo" />
 
         <activity
-            android:name=".MapsActivity"
-            android:exported="false"
-            android:label="@string/title_activity_maps" />
-        <activity
-            android:name=".AddPostActivity"
+            android:name=".post.AddPostActivity"
             android:exported="false" />
         <activity
             android:name=".LoginActivity"

@@ -28,6 +28,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class SettingUserActivity extends AppCompatActivity {
@@ -80,7 +81,7 @@ public class SettingUserActivity extends AppCompatActivity {
                             while(!image_url.isComplete());
 
                             UserModel user = new UserModel(et_nickname.getText().toString(), image_url.getResult().toString(),
-                                    null,uid);
+                                    null,uid, null);
 
                             mDatabase.collection("Users").document(uid).set(user)
                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -104,7 +105,7 @@ public class SettingUserActivity extends AppCompatActivity {
                 }
                 else{
                     UserModel user = new UserModel(et_nickname.getText().toString(), null,
-                            null,uid);
+                            null,uid, null);
 
                     mDatabase.collection("Users").document(uid).set(user)
                             .addOnSuccessListener(new OnSuccessListener<Void>() {

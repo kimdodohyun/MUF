@@ -11,9 +11,11 @@ import android.os.StrictMode;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.muf.SetZone.LocationListPopUpActivity;
 import com.example.muf.SetZone.SetZoneActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.spotify.android.appremote.api.ConnectionParams;
@@ -29,6 +31,7 @@ public class homeActivity extends AppCompatActivity {
     public static String AUTH_TOKEN;
     static final String TAG = "HOME";
     private BottomNavigationView bottomNavigationView;
+    private ImageButton imageButton;
     public static FragmentManager fm;
     private FragmentTransaction ft;
     private Friends_list_frag frag1;
@@ -36,7 +39,10 @@ public class homeActivity extends AppCompatActivity {
     private Home_frag frag3;
     private Community_frag frag4;
     private Myprofile_frag frag5;
+    private int CurrentFrag;
     private int flag = -1;
+    private String placename;
+    private String placeenglishname;
     private static final String CLIENT_ID = "6102ea6562fe41fd99ebad74ecffd39f";
     private static final String REDIRECT_URI ="com.example.muf://callback";
     private static final int REQUEST_CODE = 1337;
@@ -49,6 +55,14 @@ public class homeActivity extends AppCompatActivity {
 
         if (android.os.Build.VERSION.SDK_INT > 9) { StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build(); StrictMode.setThreadPolicy(policy); }
 
+        imageButton = findViewById(R.id.search_location);
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), LocationListPopUpActivity.class);
+                startActivityForResult(intent, 12161531);
+            }
+        });
 
         bottomNavigationView = findViewById(R.id.bottom_navi);
         bottomNavigationView.setSelectedItemId(R.id.main_home);
@@ -57,18 +71,23 @@ public class homeActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.friends_list:
+                        CurrentFrag = 0;
                         setFrag(0);
                         break;
                     case R.id.chatting:
+                        CurrentFrag = 1;
                         setFrag(1);
                         break;
                     case R.id.main_home:
+                        CurrentFrag = 2;
                         setFrag(2);
                         break;
                     case R.id.community:
+                        CurrentFrag = 3;
                         setFrag(3);
                         break;
                     case R.id.my_profile:
+                        CurrentFrag = 4;
                         setFrag(4);
                         break;
                 }
@@ -81,11 +100,8 @@ public class homeActivity extends AppCompatActivity {
         frag3 = new Home_frag();
         frag4 = new Community_frag();
         frag5 = new Myprofile_frag();
-
-        if(flag == -1){ //Home에서 아직 위치가 설정되지 않은 경우
-            Intent intent = new Intent(this, SetZoneActivity.class);
-            startActivityForResult(intent, 1531);
-        }
+        CurrentFrag = 2;
+        setFrag(2); //첫 프래그먼트 홈으로 지정
 
         Log.d("HomeActivity onCreate", "flagvalue = " + flag +" kimgijeong");
     }
@@ -155,15 +171,30 @@ public class homeActivity extends AppCompatActivity {
                     // Handle other cases
             }
         }
-        else if (requestCode == 1531 && resultCode == RESULT_OK){
+        else if (requestCode == 12161531 && resultCode == RESULT_OK){ //SearchLocaton에서 장소를 선택했으면
             Log.d("HomeActivity", "OnActivityResult kimgijeong");
+            String name = data.getStringExtra("name"); //선택한 장소 name을 받아와
+            Intent intent = new Intent(this, SetZoneActivity.class); //SetZoneActivity로 전달
+            intent.putExtra("locationname",name);
+            startActivityForResult(intent, 1531);
+
+        }
+        else if(requestCode == 1531 && resultCode == RESULT_OK){ //SetZoneActivity완료후 flag값과 장소 이름 frag로 전달
             flag = data.getIntExtra("flag", -1);
+            placename = data.getStringExtra("name");
+            placeenglishname = data.getStringExtra("englishname");
+            Log.d(TAG, "onActivityResult: " + flag + ", " + placename);
             if(flag != -1){ //0 : Nozone, 1 : Setzone
                 Bundle bundle = new Bundle();
                 bundle.putInt("flag", flag);
+                bundle.putString("name", placename);
+                bundle.putString("englishname", placeenglishname);
+                Log.d(TAG, "onActivityResult: " + flag + ", " + placename);
                 frag3.setArguments(bundle);
                 frag4.setArguments(bundle);
-                setFrag(2); //첫 프래그먼트 화면 지정
+                Log.d("현재프래그먼트", ":" + CurrentFrag);
+                if(CurrentFrag == 2) setFrag(2);
+                else if(CurrentFrag == 3) setFrag(3);
             }
         }
     }
@@ -225,7 +256,6 @@ public class homeActivity extends AppCompatActivity {
 
         }
     }
-
 
     @Override
     protected void onStop() {

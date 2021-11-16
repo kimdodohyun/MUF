@@ -42,10 +42,13 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-
-import java.util.Set;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 public class SetZoneActivity extends AppCompatActivity {
     private static final String TAG = SetZoneActivity.class.getSimpleName();
@@ -59,30 +62,58 @@ public class SetZoneActivity extends AppCompatActivity {
     private FusedLocationProviderClient fusedLocationProviderClient;
     private LocationRequest locationRequest;
     private Location user_location;
-    private Location inha_location;
+    private Location dest_location;
     private double distance;
+    private double limitdistance;
     private static double latitude, longitude;
-    private double inhalat = 37.450013, inhalng = 126.653577;
+    private static double destlatitude, destlongitude;
+    private String placename;
+    private String placeenglishname;
     private int flag = -1; //0 : No zone, 1 : Set zone
     private GoogleMap mygoogleMap;
     private Marker currentMarker = null;
     private SupportMapFragment supportMapFragment;
     private Button button;
+    private FirebaseFirestore firebaseFirestore;
+    private LocationList locationList;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        locationList = new LocationList();
         setContentView(R.layout.activity_set_zone);
-        Log.d("first latlng", ":" + latitude + "," + longitude);
-        checkLocationPermission(); //이 메소드가 호출되면 내위치 latitude와 longitude가 설정됨
+        Intent intent = getIntent();
+        String name = intent.getStringExtra("locationname");
+        Log.d("locationname 체크", name);
+        firebaseFirestore = FirebaseFirestore.getInstance();
+        firebaseFirestore.collection("LocationLists").whereEqualTo("name", name).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()){
+                    for(QueryDocumentSnapshot document : task.getResult()){
+                        locationList = document.toObject(LocationList.class);
+                        destlatitude = locationList.getLatitude();
+                        destlongitude = locationList.getLongitude();
+                        placename = locationList.getName();
+                        placeenglishname = locationList.getEnglishname();
+                        limitdistance = locationList.getDistance();
+                        checkLocationPermission(); //이 메소드가 호출되면 내위치 latitude와 longitude가 설정됨
+                        Log.d("aaaaaa", "onComplete: "+ destlatitude + " " +destlongitude);
+                    }
+                }
+            }
+        });
+
+        Log.d("first latlng", ":" + destlatitude + "," + destlongitude);
+
         Log.d("second latlng", ":" + latitude + "," + longitude);
-        //초기 구글맵 인하대 위치로 카메라 이동 후 마커생성
+        //초기 구글맵 선택한 장소로 카메라 이동 후 마커생성
         supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         supportMapFragment.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(@NonNull GoogleMap googleMap) {
                 mygoogleMap = googleMap;
-                LatLng latLng = new LatLng(inhalat, inhalng);
+                LatLng latLng = new LatLng(destlatitude, destlongitude);
                 Log.d("third latlng", ":" + latitude + "," + longitude);
                 mygoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
             }
@@ -95,6 +126,8 @@ public class SetZoneActivity extends AppCompatActivity {
                 //HomeActivity로 flag intent 전달
                 Intent intent = new Intent();
                 intent.putExtra("flag", flag);
+                intent.putExtra("name", placename);
+                intent.putExtra("englishname", placeenglishname);
                 setResult(RESULT_OK,intent);
                 finish();
             }
@@ -223,19 +256,19 @@ public class SetZoneActivity extends AppCompatActivity {
             user_location.setLatitude(latitude);
             user_location.setLongitude(longitude);
 
-            inha_location = new Location("inha");
-            inha_location.setLatitude(inhalat);
-            inha_location.setLongitude(inhalng);
+            dest_location = new Location("inha");
+            dest_location.setLatitude(destlatitude);
+            dest_location.setLongitude(destlongitude);
 
-            distance = user_location.distanceTo(inha_location);
+            distance = user_location.distanceTo(dest_location);
 
-            if(distance > 0 && distance < 500) flag = 1; //Set zone;
+            if(distance > 0 && distance < limitdistance) flag = 1; //Set zone;
             else flag = 0;
 
             if(currentMarker != null) currentMarker.remove();
 
             LatLng currentLatLng = new LatLng(latitude, longitude);
-            LatLng inhaLatLng = new LatLng(inhalat, inhalng);
+            LatLng inhaLatLng = new LatLng(destlatitude, destlongitude);
 
             MarkerOptions markerOptions = new MarkerOptions();
             markerOptions.position(currentLatLng);
@@ -255,6 +288,7 @@ public class SetZoneActivity extends AppCompatActivity {
                     .strokeWidth(5)
                     .strokeColor(Color.parseColor("#FF1212"))
                     .fillColor(Color.parseColor("#88FF3636"));
+
             if(flag == 0) mygoogleMap.addCircle(NoCircle);
             else if (flag == 1) mygoogleMap.addCircle(SetCircle);
         }

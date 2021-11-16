@@ -1,18 +1,13 @@
 package com.example.muf.music;
 
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-
-import com.example.muf.AddPostActivity;
-import com.example.muf.SearchActivity;
 
 import java.util.List;
 

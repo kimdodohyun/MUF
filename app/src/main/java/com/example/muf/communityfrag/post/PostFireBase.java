@@ -1,4 +1,4 @@
-package com.example.muf.post;
+package com.example.muf.communityfrag.post;
 
 import com.google.firebase.Timestamp;
 
@@ -13,10 +13,12 @@ public class PostFireBase {
     private Timestamp timestamp;
     private String uid;
     private String uri;
+    private int number;
+
     public  PostFireBase(){}
 
     public PostFireBase(String Profileimg, String Username, String Albumtitle, String Artist,
-                        String Albumimg, String Inputtext, Timestamp Timestamp, String Uid, String Uri){
+                        String Albumimg, String Inputtext, Timestamp Timestamp, String Uid, String Uri, int Number){
         this.profileimg = Profileimg;
         this.username = Username;
         this.albumtitle = Albumtitle;
@@ -26,6 +28,7 @@ public class PostFireBase {
         this.timestamp = Timestamp;
         this.uid = Uid;
         this.uri = Uri;
+        this.number = Number;
     }
 
     public String getUri() { return uri; }
@@ -50,6 +53,9 @@ public class PostFireBase {
 
     public String getInputtext() { return inputtext; }
     public void setInputtext(String inputtext) { this.inputtext = inputtext; }
+
+    public int getNumber() { return number; }
+    public void setNumber(int number) { this.number = number; }
 
     public String getArtis() { return artist; }
     public void setArtis(String artis) { this.artist = artis; }

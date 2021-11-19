@@ -15,8 +15,16 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.muf.SetZone.LocationListPopUpActivity;
 import com.example.muf.SetZone.SetZoneActivity;
+import com.example.muf.communityfrag.Community_frag;
+import com.example.muf.friend.Friends_list_frag;
+import com.example.muf.myprofilefrag.Myprofile_frag;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
@@ -26,10 +34,14 @@ import com.spotify.sdk.android.auth.AuthorizationClient;
 import com.spotify.sdk.android.auth.AuthorizationRequest;
 import com.spotify.sdk.android.auth.AuthorizationResponse;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class homeActivity extends AppCompatActivity {
     public static String AUTH_TOKEN;
     static final String TAG = "HOME";
     private BottomNavigationView bottomNavigationView;
+    private ImageButton imageButton;
     public static FragmentManager fm;
     private FragmentTransaction ft;
     private Friends_list_frag frag1;
@@ -37,14 +49,21 @@ public class homeActivity extends AppCompatActivity {
     private Home_frag frag3;
     private Community_frag frag4;
     private Myprofile_frag frag5;
+    private int CurrentFrag;
     private int flag = -1;
+    private String placename;
+    private String placeenglishname;
     private static final String CLIENT_ID = "6102ea6562fe41fd99ebad74ecffd39f";
     private static final String REDIRECT_URI ="com.example.muf://callback";
     private static final int REQUEST_CODE = 1337;
-    public SpotifyAppRemote mSpotifyAppRemote;
+    public static SpotifyAppRemote mSpotifyAppRemote;
     private ImageButton btn_play;
     private ImageButton btn_previous;
     private ImageButton btn_next;
+    private FirebaseFirestore firebaseFirestore;
+    private FirebaseAuth firebaseAuth;
+    private String user_uid;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +74,14 @@ public class homeActivity extends AppCompatActivity {
         btn_play = findViewById(R.id.btn_play);
         btn_previous = findViewById(R.id.btn_previous);
         btn_next = findViewById(R.id.btn_next);
+        imageButton = findViewById(R.id.search_location);
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), LocationListPopUpActivity.class);
+                startActivityForResult(intent, 12161531);
+            }
+        });
 
         bottomNavigationView = findViewById(R.id.bottom_navi);
         bottomNavigationView.setSelectedItemId(R.id.main_home);
@@ -63,18 +90,23 @@ public class homeActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.friends_list:
+                        CurrentFrag = 0;
                         setFrag(0);
                         break;
                     case R.id.chatting:
+                        CurrentFrag = 1;
                         setFrag(1);
                         break;
                     case R.id.main_home:
+                        CurrentFrag = 2;
                         setFrag(2);
                         break;
                     case R.id.community:
+                        CurrentFrag = 3;
                         setFrag(3);
                         break;
                     case R.id.my_profile:
+                        CurrentFrag = 4;
                         setFrag(4);
                         break;
                 }
@@ -87,11 +119,8 @@ public class homeActivity extends AppCompatActivity {
         frag3 = new Home_frag();
         frag4 = new Community_frag();
         frag5 = new Myprofile_frag();
-
-        if(flag == -1){ //Home에서 아직 위치가 설정되지 않은 경우
-            Intent intent = new Intent(this, SetZoneActivity.class);
-            startActivityForResult(intent, 1531);
-        }
+        CurrentFrag = 2;
+        setFrag(2); //첫 프래그먼트 홈으로 지정
 
         btn_next.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -134,20 +163,13 @@ public class homeActivity extends AppCompatActivity {
 
         SpotifyAppRemote.connect(this, connectionParams,
                 new Connector.ConnectionListener() {
-
                     public void onConnected(SpotifyAppRemote spotifyAppRemote) {
                         mSpotifyAppRemote = spotifyAppRemote;
-                        Log.d("MainActivity", "Connected! Yay!");
-
-                        // Now you can start interacting with App Remote
                         connected();
-
                     }
 
                     public void onFailure(Throwable throwable) {
                         Log.e("MyActivity", throwable.getMessage(), throwable);
-
-                        // Something went wrong when attempting to connect! Handle errors here
                     }
                 });
     }
@@ -187,15 +209,34 @@ public class homeActivity extends AppCompatActivity {
                     // Handle other cases
             }
         }
-        else if (requestCode == 1531 && resultCode == RESULT_OK){
+        else if (requestCode == 12161531 && resultCode == RESULT_OK){ //SearchLocaton에서 장소를 선택했으면
             Log.d("HomeActivity", "OnActivityResult kimgijeong");
+            String name = data.getStringExtra("englishname"); //선택한 장소 ename을 받아와
+            Intent intent = new Intent(this, SetZoneActivity.class); //SetZoneActivity로 전달
+            intent.putExtra("locationname",name);
+            startActivityForResult(intent, 1531);
+
+        }
+        else if(requestCode == 1531 && resultCode == RESULT_OK){ //SetZoneActivity완료후 flag값과 장소 이름 frag로 전달
             flag = data.getIntExtra("flag", -1);
+            placename = data.getStringExtra("name");
+            placeenglishname = data.getStringExtra("englishname");
             if(flag != -1){ //0 : Nozone, 1 : Setzone
                 Bundle bundle = new Bundle();
                 bundle.putInt("flag", flag);
+                bundle.putString("name", placename);
+                bundle.putString("englishname", placeenglishname);
+                if(placename != null && placename.length() > 0){ //Zone 설정을 성공하면 파이어베이스 사용자 db에 위치권한 추가
+                    user_uid = FirebaseAuth.getInstance().getUid();
+                    firebaseFirestore = FirebaseFirestore.getInstance();
+                    DocumentReference docRef = firebaseFirestore.collection("Users").document(user_uid)
+                            .collection("Myinfo").document("info");
+                    docRef.update("myzonelist", FieldValue.arrayUnion(placename));
+                }
                 frag3.setArguments(bundle);
                 frag4.setArguments(bundle);
-                setFrag(2); //첫 프래그먼트 화면 지정
+                if(CurrentFrag == 2) setFrag(2);
+                else if(CurrentFrag == 3) setFrag(3);
             }
         }
     }
@@ -226,6 +267,8 @@ public class homeActivity extends AppCompatActivity {
                                         bitmap -> {
                                             img_track.setImageBitmap(bitmap);
                                         });
+                        if(placeenglishname != null)
+                            dbFunction(track);
                     }
                     else{
                         TextView tv_title = findViewById(R.id.title_txt);
@@ -234,6 +277,14 @@ public class homeActivity extends AppCompatActivity {
                         tv_artist.setText("Spotify로 노래를 재생시켜 주세요.");
                     }
                 });
+    }
+
+    private void dbFunction(Track track){
+        Map<String, Object> data = new HashMap<>();
+        data.put(FirebaseAuth.getInstance().getUid(), track.uri);
+        //StreamModel stream = new StreamModel(data);
+        FirebaseFirestore.getInstance().collection(placeenglishname).document("UserLists")
+                .update(FirebaseAuth.getInstance().getUid(), track.uri);
     }
 
     //프래그먼트 교체가 일어나는 실행문

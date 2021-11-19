@@ -1,4 +1,4 @@
-package com.example.muf.post;
+package com.example.muf.communityfrag.post;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -70,8 +70,6 @@ public class PostInfoAdapter extends RecyclerView.Adapter<PostInfoAdapter.PostIn
             this.tv_artist = itemView.findViewById(R.id.artistname);
             this.album_imag = itemView.findViewById(R.id.album_image);
             this.tv_inputtext = itemView.findViewById(R.id.inputtext);
-
-
         }
     }
 }

@@ -22,9 +22,9 @@
             android:id="@+id/home_title"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            app:layout_constraintStart_toStartOf="parent"
             android:text="MUF"
-            android:textSize="34sp" />
+            android:textSize="34sp"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <ImageView
             android:id="@+id/imageView3"
@@ -34,6 +34,17 @@
             app:layout_constraintStart_toEndOf="@id/home_title"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_baseline_music_note_24" />
+
+        <ImageButton
+            android:id="@+id/search_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#AAB4DF"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_baseline_add_location_24"
+            tools:layout_editor_absoluteX="364dp" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -53,11 +64,11 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/music_info"
-        app:layout_constraintTop_toBottomOf="@id/title_bar"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintLeft_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/title_bar">
 
     </FrameLayout>
 
@@ -65,9 +76,8 @@
         android:id="@+id/music_info"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        app:layout_constraintBottom_toTopOf="@id/bottom_navi"
         android:background="@color/white"
-        android:orientation="horizontal">
+        app:layout_constraintBottom_toTopOf="@id/bottom_navi">
 
         <ImageView
             android:id="@+id/album_img"

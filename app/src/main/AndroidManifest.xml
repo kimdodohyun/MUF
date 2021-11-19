@@ -25,6 +25,10 @@
             android:exported="true"
             android:windowSoftInputMode="adjustResize"/>
         <activity
+            android:name=".SetZone.LocationListPopUpActivity"
+            android:theme="@android:style/Theme.Dialog"
+            android:exported="false" />
+        <activity
             android:name=".SetZone.SetZoneActivity"
             android:exported="false" />
         <activity
@@ -46,11 +50,7 @@
             android:value="AIzaSyBWhUlWrr3R1CmhC-gXgAJs0APLOmxflZo" />
 
         <activity
-            android:name=".MapsActivity"
-            android:exported="false"
-            android:label="@string/title_activity_maps" />
-        <activity
-            android:name=".AddPostActivity"
+            android:name=".communityfrag.post.AddPostActivity"
             android:exported="false" />
         <activity
             android:name=".LoginActivity"
@@ -83,7 +83,7 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-        <activity android:name=".ProfileEditActivity" />
+        <activity android:name=".myprofilefrag.ProfileEditActivity" />
     </application>
 
 </manifest>

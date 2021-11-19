@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -32,14 +33,23 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 public class SetZoneActivity extends AppCompatActivity {
     private static final String TAG = SetZoneActivity.class.getSimpleName();
@@ -53,31 +63,57 @@ public class SetZoneActivity extends AppCompatActivity {
     private FusedLocationProviderClient fusedLocationProviderClient;
     private LocationRequest locationRequest;
     private Location user_location;
-    private Location inha_location;
+    private Location dest_location;
     private double distance;
-    private double latitude, longitude;
-    private double inhalat = 37.450013, inhalng = 126.653577;
+    private double limitdistance;
+    private static double latitude, longitude;
+    private static double destlatitude, destlongitude;
+    private String placename;
+    private String placeenglishname;
     private int flag = -1; //0 : No zone, 1 : Set zone
-    GoogleMap mygoogleMap;
+    private GoogleMap mygoogleMap;
+    private Marker currentMarker = null;
     private SupportMapFragment supportMapFragment;
     private Button button;
+    private FirebaseFirestore firebaseFirestore;
+    private LocationList locationList;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        locationList = new LocationList();
         setContentView(R.layout.activity_set_zone);
-        Log.d("first latlng", ":" + latitude + "," + longitude);
-        checkLocationPermission(); //이 메소드가 호출되면 내위치 latitude와 longitude가 설정됨
-        Log.d("second latlng", ":" + latitude + "," + longitude);
-        //구글맵 내위치로 카메라 이동 후 마커생성
+        Intent intent = getIntent();
+        String ename = intent.getStringExtra("locationname");
+        Log.d("locationname 체크", ename);
+        firebaseFirestore = FirebaseFirestore.getInstance();
+
+        // HomeActivity에게 받은 ename으로 문서 접근
+        firebaseFirestore.collection("LocationLists").document(ename).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()){
+                    DocumentSnapshot document = task.getResult();
+                    locationList = document.toObject(LocationList.class);
+                    destlatitude = locationList.getLatitude();
+                    destlongitude = locationList.getLongitude();
+                    placename = locationList.getZonename().get("kname");
+                    placeenglishname = locationList.getZonename().get("ename");
+                    limitdistance = locationList.getDistance();
+                    checkLocationPermission(); //이 메소드가 호출되면 내위치 latitude와 longitude가 설정됨
+                    Log.d("aaaaaa", "onComplete: "+ destlatitude + " " +destlongitude);
+                }
+            }
+        });
+
+        //초기 구글맵 선택한 장소로 카메라 이동 후 마커생성
         supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         supportMapFragment.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(@NonNull GoogleMap googleMap) {
                 mygoogleMap = googleMap;
-                LatLng latLng = new LatLng(latitude, longitude);
+                LatLng latLng = new LatLng(destlatitude, destlongitude);
                 Log.d("third latlng", ":" + latitude + "," + longitude);
-                mygoogleMap.addMarker(new MarkerOptions().position(latLng).title("내위치" + latitude + "," + longitude));
                 mygoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
             }
         });
@@ -89,6 +125,8 @@ public class SetZoneActivity extends AppCompatActivity {
                 //HomeActivity로 flag intent 전달
                 Intent intent = new Intent();
                 intent.putExtra("flag", flag);
+                intent.putExtra("name", placename);
+                intent.putExtra("englishname", placeenglishname);
                 setResult(RESULT_OK,intent);
                 finish();
             }
@@ -211,18 +249,47 @@ public class SetZoneActivity extends AppCompatActivity {
             longitude = locationResult.getLastLocation().getLongitude();
             fusedLocationProviderClient.removeLocationUpdates(locationCallback); //실시간이 아니라 한번만 실행하는 것
 
+            Log.d("Fourth latlng", ":" + latitude + "," + longitude);
+            //distance 계산을 위해 user와 inha location setting
             user_location = new Location("user");
             user_location.setLatitude(latitude);
             user_location.setLongitude(longitude);
 
-            inha_location = new Location("inha");
-            inha_location.setLatitude(inhalat);
-            inha_location.setLongitude(inhalng);
+            dest_location = new Location("inha");
+            dest_location.setLatitude(destlatitude);
+            dest_location.setLongitude(destlongitude);
 
-            distance = user_location.distanceTo(inha_location);
+            distance = user_location.distanceTo(dest_location);
 
-            if(distance > 0 && distance < 500) flag = 1; //Set zone;
+            if(distance > 0 && distance < limitdistance) flag = 1; //Set zone;
             else flag = 0;
+
+            if(currentMarker != null) currentMarker.remove();
+
+            LatLng currentLatLng = new LatLng(latitude, longitude);
+            LatLng inhaLatLng = new LatLng(destlatitude, destlongitude);
+
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.position(currentLatLng);
+            markerOptions.title("내 위치");
+            markerOptions.draggable(true);
+            currentMarker = mygoogleMap.addMarker(markerOptions);
+
+            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(currentLatLng, 15);
+            mygoogleMap.moveCamera(cameraUpdate);
+            CircleOptions SetCircle = new CircleOptions().center(inhaLatLng)
+                    .radius(500)
+                    .strokeWidth(5)
+                    .strokeColor(Color.parseColor("#0054FF"))
+                    .fillColor(Color.parseColor("#882478FF"));
+            CircleOptions NoCircle = new CircleOptions().center(inhaLatLng)
+                    .radius(500)
+                    .strokeWidth(5)
+                    .strokeColor(Color.parseColor("#FF1212"))
+                    .fillColor(Color.parseColor("#88FF3636"));
+
+            if(flag == 0) mygoogleMap.addCircle(NoCircle);
+            else if (flag == 1) mygoogleMap.addCircle(SetCircle);
         }
 
         @Override

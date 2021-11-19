@@ -46,6 +46,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -83,30 +84,28 @@ public class SetZoneActivity extends AppCompatActivity {
         locationList = new LocationList();
         setContentView(R.layout.activity_set_zone);
         Intent intent = getIntent();
-        String name = intent.getStringExtra("locationname");
-        Log.d("locationname 체크", name);
+        String ename = intent.getStringExtra("locationname");
+        Log.d("locationname 체크", ename);
         firebaseFirestore = FirebaseFirestore.getInstance();
-        firebaseFirestore.collection("LocationLists").whereEqualTo("name", name).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+
+        // HomeActivity에게 받은 ename으로 문서 접근
+        firebaseFirestore.collection("LocationLists").document(ename).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.isSuccessful()){
-                    for(QueryDocumentSnapshot document : task.getResult()){
-                        locationList = document.toObject(LocationList.class);
-                        destlatitude = locationList.getLatitude();
-                        destlongitude = locationList.getLongitude();
-                        placename = locationList.getName();
-                        placeenglishname = locationList.getEnglishname();
-                        limitdistance = locationList.getDistance();
-                        checkLocationPermission(); //이 메소드가 호출되면 내위치 latitude와 longitude가 설정됨
-                        Log.d("aaaaaa", "onComplete: "+ destlatitude + " " +destlongitude);
-                    }
+                    DocumentSnapshot document = task.getResult();
+                    locationList = document.toObject(LocationList.class);
+                    destlatitude = locationList.getLatitude();
+                    destlongitude = locationList.getLongitude();
+                    placename = locationList.getZonename().get("kname");
+                    placeenglishname = locationList.getZonename().get("ename");
+                    limitdistance = locationList.getDistance();
+                    checkLocationPermission(); //이 메소드가 호출되면 내위치 latitude와 longitude가 설정됨
+                    Log.d("aaaaaa", "onComplete: "+ destlatitude + " " +destlongitude);
                 }
             }
         });
 
-        Log.d("first latlng", ":" + destlatitude + "," + destlongitude);
-
-        Log.d("second latlng", ":" + latitude + "," + longitude);
         //초기 구글맵 선택한 장소로 카메라 이동 후 마커생성
         supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         supportMapFragment.getMapAsync(new OnMapReadyCallback() {

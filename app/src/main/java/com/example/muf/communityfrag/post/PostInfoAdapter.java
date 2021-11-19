@@ -1,4 +1,4 @@
-package com.example.muf.post;
+package com.example.muf.communityfrag.post;
 
 import android.content.Context;
 import android.view.LayoutInflater;

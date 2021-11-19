@@ -1,4 +1,4 @@
-package com.example.muf;
+package com.example.muf.friend;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,6 +13,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.muf.ChatActivity;
+import com.example.muf.R;
 import com.example.muf.friend.FriendRecyclerAdapter;
 import com.example.muf.friend.OnItemClickEventListener;
 import com.example.muf.model.UserModel;

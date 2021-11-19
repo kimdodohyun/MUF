@@ -5,6 +5,7 @@
     android:id="@+id/location_list_popup"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/mainTheme"
     tools:context=".SetZone.LocationListPopUpActivity">
 
     <LinearLayout

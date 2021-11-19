@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
@@ -17,18 +16,11 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.muf.ChatActivity;
 import com.example.muf.R;
-import com.example.muf.friend.FriendRecyclerAdapter;
-import com.example.muf.friend.OnItemClickEventListener;
-import com.example.muf.model.UserModel;
-import com.example.muf.post.PostFireBase;
-import com.example.muf.post.PostInfoAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -72,7 +64,6 @@ public class LocationListPopUpActivity extends Activity {
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if(task.isSuccessful()){
                     for(QueryDocumentSnapshot document : task.getResult()){
-                        Log.d("task 횟수 체크", "카운트");
                         locationList = document.toObject(LocationList.class);
                         arrayList.add(locationList);
                     }
@@ -89,8 +80,8 @@ public class LocationListPopUpActivity extends Activity {
             @Override
             public void onItemClick(LocationListAdapter.LocationListViewHolder holder, View view, int pos) {
                 Intent intent = new Intent();
-                intent.putExtra("name",arrayList.get(pos).getName());
-                intent.putExtra("englishname", arrayList.get(pos).getEnglishname());
+                intent.putExtra("name",arrayList.get(pos).getZonename().get("kname"));
+                intent.putExtra("englishname", arrayList.get(pos).getZonename().get("ename"));
                 setResult(RESULT_OK, intent);
                 finish();
             }

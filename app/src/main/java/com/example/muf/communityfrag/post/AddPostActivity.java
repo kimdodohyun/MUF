@@ -1,4 +1,4 @@
-package com.example.muf.post;
+package com.example.muf.communityfrag.post;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,12 +35,14 @@ public class AddPostActivity extends AppCompatActivity {
     private Music selected_music;
     private UserModel userinfo;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private DocumentReference docRef;
     private String albumtitle;
     private String albumimg;
     private String artist;
     private String uri;
     private ImageView imageView;
-    private String locationenglishname;
+    private String ename;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,9 +52,10 @@ public class AddPostActivity extends AppCompatActivity {
         userinfo = new UserModel();
         imageView = findViewById(R.id.search_result_img);
         Intent intent = getIntent();
-        locationenglishname = intent.getStringExtra("englishname");
+        ename = intent.getStringExtra("englishname");
         //파이어스토어에서 현재 user의 userinfo 가져오기
-        DocumentReference docRef = db.collection("Users").document(user_uid);
+        docRef = db.collection("Users").document(user_uid)
+                .collection("Myinfo").document("info");
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -71,7 +74,7 @@ public class AddPostActivity extends AppCompatActivity {
         public void onClick(View v) {
             switch(v.getId()){
                 case R.id.upload:
-                    postUpdate(locationenglishname);
+                    postUpdate(ename);
                     finish();
                     break;
                 case R.id.search_music:
@@ -100,12 +103,14 @@ public class AddPostActivity extends AppCompatActivity {
         final String inputtext = ((EditText) findViewById(R.id.postcontents)).getText().toString();
         final String userprofileimg = userinfo.getProfileImageUrl();
         final String username = userinfo.getNickName();
+        final int postnumber = userinfo.getPostcount()+1;     //업로드할 게시글 number는 현재 사용자 게시글 갯수 + 1
         final Timestamp timestamp = new Timestamp(new Date());
         final String placename = Locationname;
 
         if(inputtext.length() > 0){
             //사용자프로필사진, 사용자이름, 앨범title, artist, 앨범img, inputtext를 넘겨야함
-            PostFireBase postInfo = new PostFireBase(userprofileimg, username, albumtitle, artist, albumimg, inputtext, timestamp, user_uid, uri);
+            PostFireBase postInfo = new PostFireBase(userprofileimg, username, albumtitle, artist,
+                    albumimg, inputtext, timestamp, user_uid, uri, postnumber);
             uploader(postInfo, placename);
         } else{
             startToast("내용을 입력해주세요.");
@@ -113,15 +118,29 @@ public class AddPostActivity extends AppCompatActivity {
     }
 
     private void uploader(PostFireBase postInfo, String Locationname){ //파이어스토어에 작성내용 업로드
-        Log.d(TAG, "uploader: " + locationenglishname);
-        db.collection(Locationname + "PostLists").add(postInfo) //파이어스토어 해당 장소PostLists 컬렉션에 postInfo 객체에 저장된 게시글내용을 업로드
+        db.collection(Locationname).document("PostLists").collection("contents").add(postInfo) // 현재장소PostLists 컬렉션에 postInfo 객체에 저장된 게시글내용을 업로드
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
                         Log.d(TAG, "DocumentSnapshot written with ID: " + documentReference.getId());
-                        Intent intent = new Intent();
-                        setResult(RESULT_OK,intent);
-                        finish();
+                        //Users컬렉션에 uid문서의 MyPostLists컬렉션에도 게시글데이터 업로드
+                        db.collection("Users").document(user_uid).collection("MyPostLists").add(postInfo)
+                                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                    @Override
+                                    public void onSuccess(DocumentReference documentReference) {
+                                        //게시글 작성 시 Users/uid/Myinfo/info에 postcount값 +1
+                                        docRef.update("postcount", userinfo.getPostcount()+1);
+                                        Intent intent = new Intent();
+                                        setResult(RESULT_OK,intent);
+                                        finish();
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.w(TAG, "Error adding documnet", e);
+                                    }
+                                });
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {

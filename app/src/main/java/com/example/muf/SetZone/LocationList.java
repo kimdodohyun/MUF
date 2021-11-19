@@ -1,29 +1,24 @@
 package com.example.muf.SetZone;
 
-import androidx.recyclerview.widget.RecyclerView;
+import java.util.HashMap;
 
 public class LocationList {
-    private String name;
     private double distance;
     private double latitude;
     private double longitude;
-    private String englishname;
+    private HashMap<String, String> zonename;
 
-    public LocationList(String Name, double Distance, double Latitude, double Longitude, String Englishname){
-        this.name = Name;
-        this.englishname = Englishname;
+    public LocationList(double Distance, double Latitude, double Longitude, HashMap<String, String> Map){
         this.distance = Distance;
         this.latitude = Latitude;
         this.longitude = Longitude;
+        this.zonename = new HashMap<>(Map);
     }
 
     public LocationList(){}
 
-    public String getEnglishname() { return englishname; }
-    public void setEnglishname(String englishname) { this.englishname = englishname; }
-
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public HashMap<String, String> getZonename() { return zonename; }
+    public void setZonename(HashMap<String, String> zonename) { this.zonename = zonename; }
 
     public double getDistance() { return distance; }
     public void setDistance(double distance) { this.distance = distance; }

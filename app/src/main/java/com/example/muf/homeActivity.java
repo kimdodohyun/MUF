@@ -17,7 +17,14 @@ import android.widget.TextView;
 
 import com.example.muf.SetZone.LocationListPopUpActivity;
 import com.example.muf.SetZone.SetZoneActivity;
+import com.example.muf.communityfrag.Community_frag;
+import com.example.muf.friend.Friends_list_frag;
+import com.example.muf.myprofilefrag.Myprofile_frag;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
@@ -47,6 +54,9 @@ public class homeActivity extends AppCompatActivity {
     private static final String REDIRECT_URI ="com.example.muf://callback";
     private static final int REQUEST_CODE = 1337;
     public SpotifyAppRemote mSpotifyAppRemote;
+    private FirebaseFirestore firebaseFirestore;
+    private FirebaseAuth firebaseAuth;
+    private String user_uid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -173,7 +183,7 @@ public class homeActivity extends AppCompatActivity {
         }
         else if (requestCode == 12161531 && resultCode == RESULT_OK){ //SearchLocaton에서 장소를 선택했으면
             Log.d("HomeActivity", "OnActivityResult kimgijeong");
-            String name = data.getStringExtra("name"); //선택한 장소 name을 받아와
+            String name = data.getStringExtra("englishname"); //선택한 장소 ename을 받아와
             Intent intent = new Intent(this, SetZoneActivity.class); //SetZoneActivity로 전달
             intent.putExtra("locationname",name);
             startActivityForResult(intent, 1531);
@@ -183,16 +193,20 @@ public class homeActivity extends AppCompatActivity {
             flag = data.getIntExtra("flag", -1);
             placename = data.getStringExtra("name");
             placeenglishname = data.getStringExtra("englishname");
-            Log.d(TAG, "onActivityResult: " + flag + ", " + placename);
             if(flag != -1){ //0 : Nozone, 1 : Setzone
                 Bundle bundle = new Bundle();
                 bundle.putInt("flag", flag);
                 bundle.putString("name", placename);
                 bundle.putString("englishname", placeenglishname);
-                Log.d(TAG, "onActivityResult: " + flag + ", " + placename);
+                if(placename != null && placename.length() > 0){ //Zone 설정을 성공하면 파이어베이스 사용자 db에 위치권한 추가
+                    user_uid = FirebaseAuth.getInstance().getUid();
+                    firebaseFirestore = FirebaseFirestore.getInstance();
+                    DocumentReference docRef = firebaseFirestore.collection("Users").document(user_uid)
+                            .collection("Myinfo").document("info");
+                    docRef.update("myzonelist", FieldValue.arrayUnion(placename));
+                }
                 frag3.setArguments(bundle);
                 frag4.setArguments(bundle);
-                Log.d("현재프래그먼트", ":" + CurrentFrag);
                 if(CurrentFrag == 2) setFrag(2);
                 else if(CurrentFrag == 3) setFrag(3);
             }

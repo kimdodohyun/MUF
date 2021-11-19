@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 
 import com.example.muf.R;
-import com.example.muf.model.UserModel;
 
 import java.util.ArrayList;
 
@@ -35,8 +34,8 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
 
     @Override
     public void onBindViewHolder(@NonNull LocationListViewHolder holder, int position) {
-        holder.tv_name.setText(arrayList.get(position).getName());
-        Log.d("test", "onBindViewHolder: "+arrayList.get(position).getName());
+        holder.tv_name.setText(arrayList.get(position).getZonename().get("kname"));
+        Log.d("test", "onBindViewHolder: "+arrayList.get(position).getZonename().get("kname"));
     }
 
     @Override

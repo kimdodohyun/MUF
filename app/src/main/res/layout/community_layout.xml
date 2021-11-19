@@ -16,7 +16,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-    <!--        app:layout_constraintTop_toBottomOf="@+id/linearLayout4" />-->
 
     <TextView
         android:id="@+id/No_zone_incommunity"

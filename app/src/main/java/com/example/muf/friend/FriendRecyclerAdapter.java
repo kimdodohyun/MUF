@@ -1,13 +1,11 @@
 package com.example.muf.friend;
 
 import android.content.Context;
-import android.media.Image;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,11 +14,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.muf.R;
 import com.example.muf.homeActivity;
 import com.example.muf.model.UserModel;
-import com.example.muf.post.PostInfoAdapter;
 import com.squareup.picasso.Picasso;
 
-import java.awt.font.TextAttribute;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import kaaes.spotify.webapi.android.SpotifyApi;

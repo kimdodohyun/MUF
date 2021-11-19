@@ -7,18 +7,23 @@
         <entry key="..\:/Users/cjdfi/MUF/app/src/main/res/layout/activity_maps.xml" value="0.13854166666666667" />
         <entry key="..\:/Users/cjdfi/MUF/app/src/main/res/layout/activity_search.xml" value="0.240625" />
         <entry key="..\:/Users/cjdfi/MUF/app/src/main/res/layout/activity_set_zone.xml" value="0.11005434782608696" />
+        <entry key="..\:/Users/cjdfi/MUF/app/src/main/res/layout/activity_setting_user.xml" value="0.24114583333333334" />
         <entry key="..\:/Users/cjdfi/MUF/app/src/main/res/layout/community_layout.xml" value="0.1" />
         <entry key="..\:/Users/cjdfi/MUF/app/src/main/res/layout/friendslist_layout.xml" value="0.24114583333333334" />
         <entry key="..\:/Users/cjdfi/MUF/app/src/main/res/layout/home_layout.xml" value="0.24114583333333334" />
-        <entry key="..\:/Users/cjdfi/MUF/app/src/main/res/layout/list_item.xml" value="0.1" />
+        <entry key="..\:/Users/cjdfi/MUF/app/src/main/res/layout/list_item.xml" value="0.136" />
+        <entry key="..\:/Users/cjdfi/MUF/app/src/main/res/layout/list_item_myprofile.xml" value="0.6" />
+        <entry key="..\:/Users/cjdfi/MUF/app/src/main/res/layout/list_itme_myprofile.xml" value="0.24114583333333334" />
         <entry key="..\:/Users/cjdfi/MUF/app/src/main/res/layout/list_location.xml" value="0.16" />
         <entry key="..\:/Users/cjdfi/MUF/app/src/main/res/layout/list_message_my.xml" value="0.10885416666666667" />
         <entry key="..\:/Users/cjdfi/MUF/app/src/main/res/layout/location_list_pop_up_layout.xml" value="0.10400000000000001" />
-        <entry key="..\:/Users/cjdfi/MUF/app/src/main/res/layout/myprofile_edit.xml" value="0.4" />
+        <entry key="..\:/Users/cjdfi/MUF/app/src/main/res/layout/myprofile_edit.xml" value="0.264" />
         <entry key="..\:/Users/cjdfi/MUF/app/src/main/res/layout/myprofile_layout.xml" value="0.24114583333333334" />
         <entry key="..\:/Users/cjdfi/MUF/app/src/main/res/layout/network_security_conig.xml" value="0.1" />
         <entry key="..\:/Users/cjdfi/MUF/app/src/main/res/layout/set_location_layout.xml" value="0.11875" />
         <entry key="..\:/Users/cjdfi/MUF/app/src/main/res/layout/write_post_layout.xml" value="0.14719202898550723" />
+        <entry key="..\:/Users/cjdfi/MUF/app/src/main/res/menu/bottom_menu.xml" value="0.1" />
+        <entry key="..\:/Users/cjdfi/MUF/app/src/main/res/menu/popupmenu.xml" value="0.1" />
         <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/drawable/buttonshape.xml" value="0.20989583333333334" />
         <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/drawable/ic_baseline_account_circle_24.xml" value="0.13958333333333334" />
         <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/drawable/ic_baseline_add_circle_24.xml" value="0.13958333333333334" />

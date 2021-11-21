@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.muf.R;
-import com.example.muf.communityfrag.post.Music;
+import com.example.muf.communityfrag.post.PostFireBase;
 
 import java.util.ArrayList;
 
@@ -30,10 +30,10 @@ public class MyPostInfoAdapter extends RecyclerView.Adapter<MyPostInfoAdapter.Po
         mButtonItemClickListener = a_listener;
     }
 
-    private ArrayList<Music> arrayList;
+    private ArrayList<PostFireBase> arrayList;
     private Context context;
 
-    public MyPostInfoAdapter(ArrayList<Music> arrayList, Context context) {
+    public MyPostInfoAdapter(ArrayList<PostFireBase> arrayList, Context context) {
         this.arrayList = arrayList;
         this.context = context;
     }

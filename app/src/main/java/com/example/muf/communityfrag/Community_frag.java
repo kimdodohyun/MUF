@@ -17,7 +17,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.muf.R;
 import com.example.muf.communityfrag.post.AddPostActivity;
-import com.example.muf.communityfrag.post.Music;
+import com.example.muf.communityfrag.post.PostFireBase;
 import com.example.muf.communityfrag.post.PostInfoAdapter;
 import com.example.muf.homeActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -34,9 +34,9 @@ public class Community_frag extends Fragment {
     private RecyclerView recyclerView;
     private PostInfoAdapter adapter;
     private RecyclerView.LayoutManager layoutManager;
-    private ArrayList<Music> arrayList;
+    private ArrayList<PostFireBase> arrayList;
     private FirebaseFirestore firebaseFirestore;
-    private Music postFireBase;
+    private PostFireBase postFireBase;
     private SwipeRefreshLayout swipeRefreshLayout;
     private View view;
     static final String TAG = "COMMUNITY";
@@ -94,7 +94,7 @@ public class Community_frag extends Fragment {
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         arrayList = new ArrayList<>(); //PostFireBase 객체를 담을 어레이 리스트(어댑터쪽으로)
-        postFireBase = new Music();
+        postFireBase = new PostFireBase();
         //파이어베이스테서 게시글 정보 가져오기
         if(flag == 1){ //Zone이 설정되었다는 것
             firebaseFirestore = FirebaseFirestore.getInstance();
@@ -105,7 +105,7 @@ public class Community_frag extends Fragment {
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if(task.isSuccessful()){
                         for(QueryDocumentSnapshot document : task.getResult()){
-                            postFireBase = document.toObject(Music.class);
+                            postFireBase = document.toObject(PostFireBase.class);
                             arrayList.add(postFireBase);
                         }
                         adapter.notifyDataSetChanged();
@@ -149,7 +149,7 @@ public class Community_frag extends Fragment {
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if(task.isSuccessful()){
                         for(QueryDocumentSnapshot document : task.getResult()){
-                            postFireBase = document.toObject(Music.class);
+                            postFireBase = document.toObject(PostFireBase.class);
                             arrayList.add(postFireBase);
                         }
                         adapter.notifyDataSetChanged();

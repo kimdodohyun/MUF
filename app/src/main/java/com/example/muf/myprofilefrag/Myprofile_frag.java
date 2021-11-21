@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.muf.R;
-import com.example.muf.communityfrag.post.Music;
+import com.example.muf.communityfrag.post.PostFireBase;
 import com.example.muf.model.UserModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -42,8 +42,8 @@ public class Myprofile_frag extends Fragment {
     private MyPostInfoAdapter adapter;
     private RecyclerView.LayoutManager layoutManager;
     private String user_uid;
-    private Music postFireBase;
-    private ArrayList<Music> arrayList;
+    private PostFireBase postFireBase;
+    private ArrayList<PostFireBase> arrayList;
     private UserModel userinfo;
     private FirebaseAuth firebaseAuth;
     private FirebaseFirestore db;
@@ -86,7 +86,7 @@ public class Myprofile_frag extends Fragment {
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         arrayList = new ArrayList<>(); //PostFireBase 객체를 담을 어레이 리스트(어댑터쪽으로)
-        postFireBase = new Music();
+        postFireBase = new PostFireBase();
         firebaseAuth = FirebaseAuth.getInstance();
         user_uid = firebaseAuth.getUid();
         userinfo = new UserModel();
@@ -125,7 +125,7 @@ public class Myprofile_frag extends Fragment {
                 if(!arrayList.isEmpty()) arrayList.clear();
                 if(task.isSuccessful()){
                     for(QueryDocumentSnapshot document : task.getResult()){
-                        postFireBase = document.toObject(Music.class);
+                        postFireBase = document.toObject(PostFireBase.class);
                         arrayList.add(postFireBase);
                     }
                     adapter.notifyDataSetChanged();
@@ -140,7 +140,7 @@ public class Myprofile_frag extends Fragment {
         adapter.setButtonItemClickListener(new MyPostInfoAdapter.OnButtonItemClickEventListener() {
             @Override
             public void onButtonItemClick(int position, int flag) {
-                final Music item = arrayList.get(position);
+                final PostFireBase item = arrayList.get(position);
                 final int option = flag;
                 switch(option){
                     case 0: // edit
@@ -153,7 +153,7 @@ public class Myprofile_frag extends Fragment {
         });
     }
 
-    private void remove(Music item){
+    private void remove(PostFireBase item){
         final int postnum = item.getNumber();
         final String ename = item.getEname();
         //내 게시글 MyPostLists에서 삭제

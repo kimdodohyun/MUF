@@ -101,9 +101,12 @@ public class Home_frag extends Fragment {
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                             DocumentSnapshot doc = task.getResult();
                             for (Object value : doc.getData().values()) {
-                                String parse[] = value.toString().split(":");
-                                Track track = spotifyApi.getService().getTrack(parse[2]);
-                                Stream stream = new Stream(track.name, track.artists.get(0).name, track.album.images.get(0).url,value.toString());
+                                String parse1[] = value.toString().split("_");
+                                if(parse1[0].equals(FirebaseAuth.getInstance().getUid()))
+                                    continue;
+                                String parse2[] = parse1[1].split(":");
+                                Track track = spotifyApi.getService().getTrack(parse2[2]);
+                                Stream stream = new Stream(track.name, track.artists.get(0).name, track.album.images.get(0).url, parse1[1]);
                                 streamList.add(stream);
                             }
                             adapter.notifyDataSetChanged();

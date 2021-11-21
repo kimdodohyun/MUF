@@ -14,15 +14,21 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.muf.SetZone.LocationListPopUpActivity;
 import com.example.muf.SetZone.SetZoneActivity;
+import com.example.muf.Streaming.Stream;
 import com.example.muf.communityfrag.Community_frag;
 import com.example.muf.friend.Friends_list_frag;
 import com.example.muf.myprofilefrag.Myprofile_frag;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.spotify.android.appremote.api.ConnectionParams;
@@ -253,6 +259,7 @@ public class homeActivity extends AppCompatActivity {
                     }
                     final Track track = playerState.track;
                     if (track != null) {
+                        Log.d(TAG, "state : "+playerState.toString());
                         TextView tv_title = findViewById(R.id.title_txt);
                         TextView tv_artist = findViewById(R.id.artist_txt);
                         ImageView img_track = findViewById(R.id.album_img);
@@ -280,11 +287,26 @@ public class homeActivity extends AppCompatActivity {
     }
 
     private void dbFunction(Track track){
-        Map<String, Object> data = new HashMap<>();
-        data.put(FirebaseAuth.getInstance().getUid(), track.uri);
-        //StreamModel stream = new StreamModel(data);
-        FirebaseFirestore.getInstance().collection(placeenglishname).document("UserLists")
-                .update(FirebaseAuth.getInstance().getUid(), track.uri);
+        String val = FirebaseAuth.getInstance().getUid()+"_"+track.uri;
+        firebaseFirestore.collection(placeenglishname).document("UserLists")
+                .update(FirebaseAuth.getInstance().getUid(), val);
+
+//        firebaseFirestore.collection(placeenglishname).document("UserLists").get()
+//                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+//                    @Override
+//                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+//                        DocumentSnapshot doc = documentSnapshot;
+//                        for (Object value : doc.getData().values()) {
+//                            Log.d(TAG, "uid : " + value.toString());
+//                            String parse[] = value.toString().split("_");
+//                            String uid = parse[0];
+//                            String uri = parse[1];
+//                            if(track.uri.equals(uri) && !FirebaseAuth.getInstance().getUid().equals(uid)){
+//                                finish();
+//                            }
+//                        }
+//                    }
+//                });
     }
 
     //프래그먼트 교체가 일어나는 실행문

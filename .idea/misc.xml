@@ -31,6 +31,8 @@
         <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/drawable/ic_baseline_account_circle_24.xml" value="0.13958333333333334" />
         <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/drawable/ic_baseline_add_circle_24.xml" value="0.13958333333333334" />
         <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/drawable/ic_baseline_chat_24.xml" value="0.22135416666666666" />
+        <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/drawable/ic_baseline_check_24.xml" value="0.14375" />
+        <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/drawable/ic_baseline_close_24.xml" value="0.14375" />
         <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/drawable/ic_baseline_group_24.xml" value="0.22135416666666666" />
         <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/drawable/ic_baseline_home_24.xml" value="0.13958333333333334" />
         <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/drawable/ic_baseline_music_note_24.xml" value="0.13958333333333334" />
@@ -42,13 +44,14 @@
         <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1953125" />
         <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/drawable/my_messagebox.xml" value="0.2557291666666667" />
         <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/layout/activity_chat.xml" value="0.25" />
-        <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/layout/activity_home.xml" value="0.5062240663900415" />
+        <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/layout/activity_event.xml" value="0.4" />
+        <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/layout/activity_home.xml" value="0.152" />
         <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/layout/activity_login.xml" value="0.2" />
         <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/layout/activity_main.xml" value="0.22" />
         <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/layout/activity_search.xml" value="0.25" />
         <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/layout/activity_setting_user.xml" value="0.2" />
         <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/layout/chatting_layout.xml" value="0.23958333333333334" />
-        <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/layout/community_layout.xml" value="0.264" />
+        <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/layout/community_layout.xml" value="0.136" />
         <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/layout/frag1.xml" value="0.1296875" />
         <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/layout/frag2.xml" value="0.1296875" />
         <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/layout/frag3.xml" value="0.1296875" />
@@ -64,7 +67,7 @@
         <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/layout/list_message_other.xml" value="0.33" />
         <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/layout/list_music.xml" value="0.33" />
         <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/layout/list_streaming.xml" value="0.152" />
-        <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/layout/location_list_pop_up_layout.xml" value="0.1265625" />
+        <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/layout/location_list_pop_up_layout.xml" value="0.2" />
         <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/layout/music_item_recycler.xml" value="0.5" />
         <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/layout/myprofile_edit.xml" value="0.264" />
         <entry key="..\:/Users/ktmny/AndroidStudioProjects/MUF/app/src/main/res/layout/myprofile_layout.xml" value="0.264" />

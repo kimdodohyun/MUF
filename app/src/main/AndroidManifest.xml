@@ -24,9 +24,13 @@
             android:name=".myprofilefrag.MySongListActivity"
             android:exported="false" />
         <activity
+            android:name=".EventActivity"
+            android:exported="true"
+            android:theme="@android:style/Theme.Dialog"/>
+        <activity
             android:name=".ChatActivity"
             android:exported="true"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".SetZone.LocationListPopUpActivity"
             android:exported="false"

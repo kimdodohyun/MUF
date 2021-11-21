@@ -320,5 +320,10 @@ public class homeActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         SpotifyAppRemote.disconnect(mSpotifyAppRemote);
+        if(flag == 1) {
+            Map<String, Object> data = new HashMap<>();
+            data.put(FirebaseAuth.getInstance().getUid(), FieldValue.delete());
+            firebaseFirestore.collection(placeenglishname).document("UserLists").update(data);
+        }
     }
 }

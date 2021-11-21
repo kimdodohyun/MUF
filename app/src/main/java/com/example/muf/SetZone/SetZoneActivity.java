@@ -263,6 +263,7 @@ public class SetZoneActivity extends AppCompatActivity {
 
             if(distance > 0 && distance < limitdistance) flag = 1; //Set zone;
             else flag = 0;
+            flag =1;
 
             if(currentMarker != null) currentMarker.remove();
 

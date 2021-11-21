@@ -18,10 +18,14 @@ import com.example.muf.Streaming.Stream;
 import com.example.muf.Streaming.StreamingRecyclerAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.models.Track;
@@ -88,7 +92,7 @@ public class Home_frag extends Fragment {
             }
         }
 
-        if (ename != null) {
+        if (flag == 1) {
             spotifyApi.setAccessToken(homeActivity.AUTH_TOKEN);
             adapter = new StreamingRecyclerAdapter(streamList,getActivity().getApplicationContext());
             db.collection(ename).document("UserLists").get()

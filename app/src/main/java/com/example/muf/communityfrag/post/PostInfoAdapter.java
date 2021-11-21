@@ -18,17 +18,22 @@ import java.util.ArrayList;
 public class PostInfoAdapter extends RecyclerView.Adapter<PostInfoAdapter.PostInfoViewHolder> {
     private ArrayList<PostFireBase> arrayList;
     private Context context;
+    private OnItemClickEventListener itemClickEventListener;
 
     public PostInfoAdapter(ArrayList<PostFireBase> arrayList, Context context) {
         this.arrayList = arrayList;
         this.context = context;
+    }
+    
+    public interface OnItemClickEventListener{
+        void onItemClick(View view, int pos);
     }
 
     @NonNull
     @Override
     public PostInfoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false);
-        PostInfoViewHolder holder = new PostInfoViewHolder(view);
+        PostInfoViewHolder holder = new PostInfoViewHolder(view,itemClickEventListener);
 
         return holder;
     }
@@ -49,6 +54,10 @@ public class PostInfoAdapter extends RecyclerView.Adapter<PostInfoAdapter.PostIn
         holder.tv_inputtext.setText(arrayList.get(position).getInputtext()); //UserName
     }
 
+    public void setOnItemClickListener(OnItemClickEventListener listener){
+        itemClickEventListener = listener;
+    }
+
     @Override
     public int getItemCount() {
         return (arrayList != null ? arrayList.size() : 0);
@@ -62,7 +71,7 @@ public class PostInfoAdapter extends RecyclerView.Adapter<PostInfoAdapter.PostIn
         ImageView album_imag;
         TextView tv_inputtext;
 
-        public PostInfoViewHolder(@NonNull View itemView) {
+        public PostInfoViewHolder(@NonNull View itemView, final OnItemClickEventListener listener) {
             super(itemView);
             this.iv_profile = itemView.findViewById(R.id.publisher_profile_picture);
             this.tv_usernickname = itemView.findViewById(R.id.publisher_nickname);
@@ -70,6 +79,16 @@ public class PostInfoAdapter extends RecyclerView.Adapter<PostInfoAdapter.PostIn
             this.tv_artist = itemView.findViewById(R.id.artistname);
             this.album_imag = itemView.findViewById(R.id.album_image);
             this.tv_inputtext = itemView.findViewById(R.id.inputtext);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    final int pos = getAdapterPosition();
+                    if(pos != RecyclerView.NO_POSITION){
+                        listener.onItemClick(view, pos);
+                    }
+                }
+            });
         }
     }
 }

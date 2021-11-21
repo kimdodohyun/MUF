@@ -17,6 +17,7 @@ import com.example.muf.ChatActivity;
 import com.example.muf.R;
 import com.example.muf.friend.FriendRecyclerAdapter;
 import com.example.muf.friend.OnItemClickEventListener;
+import com.example.muf.homeActivity;
 import com.example.muf.model.UserModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -63,7 +64,8 @@ public class Friends_list_frag extends Fragment {
                 ArrayList<String> uidList = (ArrayList<String>) doc.get("friends");
                 Collections.sort(uidList);
                 for(int i =0; i<uidList.size(); i++){
-                    db.collection("Users").whereEqualTo("uid",uidList.get(i)).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    db.collection("Users").document(uidList.get(i)).collection("Myinfo")
+                            .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             for(QueryDocumentSnapshot doc : task.getResult()){
@@ -87,6 +89,14 @@ public class Friends_list_frag extends Fragment {
                 Intent intent = new Intent(view.getContext(), ChatActivity.class);
                 intent.putExtra("destinationUid",friendList.get(pos).getUid());
                 startActivity(intent);
+            }
+        });
+
+        adapter.setOnTextClickListener(new OnTextClickEventListener() {
+            @Override
+            public void onItemClick(FriendRecyclerAdapter.ViewHolder holder, View view, int pos) {
+                UserModel item = adapter.getItem(pos);
+                homeActivity.mSpotifyAppRemote.getPlayerApi().play(item.getProfileMusicUrl());
             }
         });
 

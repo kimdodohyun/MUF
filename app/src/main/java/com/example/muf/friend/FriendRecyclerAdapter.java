@@ -24,7 +24,8 @@ import kaaes.spotify.webapi.android.models.Track;
 public class FriendRecyclerAdapter extends RecyclerView.Adapter<FriendRecyclerAdapter.ViewHolder> implements OnItemClickEventListener {
     private ArrayList<UserModel> friendList;
     private Context context;
-    OnItemClickEventListener listener;
+    OnItemClickEventListener itemListener;
+    OnTextClickEventListener textListener;
 
     public FriendRecyclerAdapter(ArrayList<UserModel> friendList, Context context){
         this.friendList = friendList;
@@ -36,7 +37,7 @@ public class FriendRecyclerAdapter extends RecyclerView.Adapter<FriendRecyclerAd
     public FriendRecyclerAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_friend, parent,false);
 
-        return new ViewHolder(view,this);
+        return new ViewHolder(view, itemListener, textListener);
     }
 
     @Override
@@ -50,13 +51,20 @@ public class FriendRecyclerAdapter extends RecyclerView.Adapter<FriendRecyclerAd
     }
 
     public void setOnItemClickListener(OnItemClickEventListener listener){
-        this.listener = listener;
+        this.itemListener = listener;
+    }
+
+    public void setOnTextClickListener(OnTextClickEventListener listener){
+        this.textListener = listener;
     }
 
     @Override
     public void onItemClick(ViewHolder holder, View view, int pos) {
-        if(listener != null){
-            listener.onItemClick(holder,view, pos);
+        if(itemListener != null){
+            itemListener.onItemClick(holder,view, pos);
+        }
+        if(textListener != null){
+            textListener.onItemClick(holder,view, pos);
         }
     }
 
@@ -66,7 +74,7 @@ public class FriendRecyclerAdapter extends RecyclerView.Adapter<FriendRecyclerAd
         TextView name;
         TextView profileMusic;
 
-        public ViewHolder(@NonNull View itemView, final OnItemClickEventListener listener){
+        public ViewHolder(@NonNull View itemView, final OnItemClickEventListener itemListener, final OnTextClickEventListener textListener){
             super(itemView);
 
             profile = (ImageView) itemView.findViewById(R.id.profile);
@@ -77,8 +85,18 @@ public class FriendRecyclerAdapter extends RecyclerView.Adapter<FriendRecyclerAd
                 @Override
                 public void onClick(View view) {
                     int pos = getAdapterPosition();
-                    if(listener != null){
-                        listener.onItemClick(ViewHolder.this, view, pos);
+                    if(itemListener != null){
+                        itemListener.onItemClick(ViewHolder.this, view, pos);
+                    }
+                }
+            });
+
+            profileMusic.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int pos = getAdapterPosition();
+                    if(textListener != null){
+                       textListener.onItemClick(ViewHolder.this, view, pos);
                     }
                 }
             });

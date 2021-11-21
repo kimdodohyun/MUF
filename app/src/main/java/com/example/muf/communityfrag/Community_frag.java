@@ -19,6 +19,7 @@ import com.example.muf.R;
 import com.example.muf.communityfrag.post.AddPostActivity;
 import com.example.muf.communityfrag.post.PostFireBase;
 import com.example.muf.communityfrag.post.PostInfoAdapter;
+import com.example.muf.homeActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -31,7 +32,7 @@ import java.util.ArrayList;
 public class Community_frag extends Fragment {
 
     private RecyclerView recyclerView;
-    private RecyclerView.Adapter adapter;
+    private PostInfoAdapter adapter;
     private RecyclerView.LayoutManager layoutManager;
     private ArrayList<PostFireBase> arrayList;
     private FirebaseFirestore firebaseFirestore;
@@ -114,6 +115,14 @@ public class Community_frag extends Fragment {
             });
             adapter = new PostInfoAdapter(arrayList, getActivity().getApplicationContext());
             recyclerView.setAdapter(adapter); //리사이클러뷰에 어댑터 연결
+
+            adapter.setOnItemClickListener(new PostInfoAdapter.OnItemClickEventListener() {
+                @Override
+                public void onItemClick(View view, int pos) {
+                    PostFireBase item = arrayList.get(pos);
+                    homeActivity.mSpotifyAppRemote.getPlayerApi().play(item.getUri());
+                }
+            });
         }
     }
 

@@ -14,15 +14,21 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.muf.SetZone.LocationListPopUpActivity;
 import com.example.muf.SetZone.SetZoneActivity;
+import com.example.muf.Streaming.Stream;
 import com.example.muf.communityfrag.Community_frag;
 import com.example.muf.friend.Friends_list_frag;
 import com.example.muf.myprofilefrag.Myprofile_frag;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.spotify.android.appremote.api.ConnectionParams;
@@ -33,6 +39,9 @@ import com.spotify.protocol.types.Track;
 import com.spotify.sdk.android.auth.AuthorizationClient;
 import com.spotify.sdk.android.auth.AuthorizationRequest;
 import com.spotify.sdk.android.auth.AuthorizationResponse;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class homeActivity extends AppCompatActivity {
     public static String AUTH_TOKEN;
@@ -53,7 +62,10 @@ public class homeActivity extends AppCompatActivity {
     private static final String CLIENT_ID = "6102ea6562fe41fd99ebad74ecffd39f";
     private static final String REDIRECT_URI ="com.example.muf://callback";
     private static final int REQUEST_CODE = 1337;
-    public SpotifyAppRemote mSpotifyAppRemote;
+    public static SpotifyAppRemote mSpotifyAppRemote;
+    private ImageButton btn_play;
+    private ImageButton btn_previous;
+    private ImageButton btn_next;
     private FirebaseFirestore firebaseFirestore;
     private FirebaseAuth firebaseAuth;
     private String user_uid;
@@ -65,6 +77,9 @@ public class homeActivity extends AppCompatActivity {
 
         if (android.os.Build.VERSION.SDK_INT > 9) { StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build(); StrictMode.setThreadPolicy(policy); }
 
+        btn_play = findViewById(R.id.btn_play);
+        btn_previous = findViewById(R.id.btn_previous);
+        btn_next = findViewById(R.id.btn_next);
         imageButton = findViewById(R.id.search_location);
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,7 +128,33 @@ public class homeActivity extends AppCompatActivity {
         CurrentFrag = 2;
         setFrag(2); //첫 프래그먼트 홈으로 지정
 
-        Log.d("HomeActivity onCreate", "flagvalue = " + flag +" kimgijeong");
+        btn_next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mSpotifyAppRemote.getPlayerApi().skipNext();
+            }
+        });
+
+        btn_previous.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mSpotifyAppRemote.getPlayerApi().skipPrevious();
+            }
+        });
+
+        btn_play.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mSpotifyAppRemote.getPlayerApi().getPlayerState().setResultCallback(playerState -> {
+                    if(playerState.isPaused){
+                        mSpotifyAppRemote.getPlayerApi().resume();
+                    }
+                    else{
+                        mSpotifyAppRemote.getPlayerApi().pause();
+                    }
+                });
+            }
+        });
     }
 
     @Override
@@ -128,20 +169,13 @@ public class homeActivity extends AppCompatActivity {
 
         SpotifyAppRemote.connect(this, connectionParams,
                 new Connector.ConnectionListener() {
-
                     public void onConnected(SpotifyAppRemote spotifyAppRemote) {
                         mSpotifyAppRemote = spotifyAppRemote;
-                        Log.d("MainActivity", "Connected! Yay!");
-
-                        // Now you can start interacting with App Remote
                         connected();
-
                     }
 
                     public void onFailure(Throwable throwable) {
                         Log.e("MyActivity", throwable.getMessage(), throwable);
-
-                        // Something went wrong when attempting to connect! Handle errors here
                     }
                 });
     }
@@ -217,13 +251,22 @@ public class homeActivity extends AppCompatActivity {
         mSpotifyAppRemote.getPlayerApi()
                 .subscribeToPlayerState()
                 .setEventCallback(playerState -> {
+                    if(playerState.isPaused){
+                        btn_play.setImageResource(R.drawable.ic_baseline_play_arrow_24);
+                    }
+                    else{
+                        btn_play.setImageResource(R.drawable.ic_baseline_pause_24);
+                    }
                     final Track track = playerState.track;
                     if (track != null) {
+                        Log.d(TAG, "state : "+playerState.toString());
                         TextView tv_title = findViewById(R.id.title_txt);
                         TextView tv_artist = findViewById(R.id.artist_txt);
                         ImageView img_track = findViewById(R.id.album_img);
                         tv_title.setText(track.name);
                         tv_artist.setText(track.artist.name);
+                        tv_title.setSelected(true);
+                        tv_artist.setSelected(true);
                         mSpotifyAppRemote
                                 .getImagesApi()
                                 .getImage(track.imageUri, Image.Dimension.LARGE)
@@ -231,7 +274,8 @@ public class homeActivity extends AppCompatActivity {
                                         bitmap -> {
                                             img_track.setImageBitmap(bitmap);
                                         });
-                        Log.d("MainActivity", track.name + " by " + track.artist.name);
+                        if(placeenglishname != null)
+                            dbFunction(track);
                     }
                     else{
                         TextView tv_title = findViewById(R.id.title_txt);
@@ -240,6 +284,29 @@ public class homeActivity extends AppCompatActivity {
                         tv_artist.setText("Spotify로 노래를 재생시켜 주세요.");
                     }
                 });
+    }
+
+    private void dbFunction(Track track){
+        String val = FirebaseAuth.getInstance().getUid()+"_"+track.uri;
+        firebaseFirestore.collection(placeenglishname).document("UserLists")
+                .update(FirebaseAuth.getInstance().getUid(), val);
+
+//        firebaseFirestore.collection(placeenglishname).document("UserLists").get()
+//                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+//                    @Override
+//                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+//                        DocumentSnapshot doc = documentSnapshot;
+//                        for (Object value : doc.getData().values()) {
+//                            Log.d(TAG, "uid : " + value.toString());
+//                            String parse[] = value.toString().split("_");
+//                            String uid = parse[0];
+//                            String uri = parse[1];
+//                            if(track.uri.equals(uri) && !FirebaseAuth.getInstance().getUid().equals(uid)){
+//                                finish();
+//                            }
+//                        }
+//                    }
+//                });
     }
 
     //프래그먼트 교체가 일어나는 실행문
@@ -272,9 +339,13 @@ public class homeActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onDestroy() {
+        super.onDestroy();
         SpotifyAppRemote.disconnect(mSpotifyAppRemote);
+        if(flag == 1) {
+            Map<String, Object> data = new HashMap<>();
+            data.put(FirebaseAuth.getInstance().getUid(), FieldValue.delete());
+            firebaseFirestore.collection(placeenglishname).document("UserLists").update(data);
+        }
     }
-
 }

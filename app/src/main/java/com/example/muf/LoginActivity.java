@@ -61,6 +61,7 @@ public class LoginActivity extends AppCompatActivity {
         btnGoogle = findViewById(R.id.btnGoogleLogin);
 
         mAuth=FirebaseAuth.getInstance();
+        mAuth.signOut();
         if (mAuth.getCurrentUser() != null) {
             Log.d(TAG, "onCreate: "+mAuth.getCurrentUser().getEmail());
             Intent intent = new Intent(getApplication(), homeActivity.class);
@@ -169,7 +170,7 @@ public class LoginActivity extends AppCompatActivity {
     private void updateUI(FirebaseUser user){ // 로그인 성공시 화면 전환
         if(user!=null){
             db = FirebaseFirestore.getInstance();
-            db.collection("Users").document(mAuth.getUid()).get()
+            db.collection("Users").document(mAuth.getUid()).collection("Myinfo").document("info").get()
                     .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {

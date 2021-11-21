@@ -69,6 +69,7 @@ public class homeActivity extends AppCompatActivity {
     private FirebaseFirestore firebaseFirestore;
     private FirebaseAuth firebaseAuth;
     private String user_uid;
+    private String current_uri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -171,6 +172,14 @@ public class homeActivity extends AppCompatActivity {
                 new Connector.ConnectionListener() {
                     public void onConnected(SpotifyAppRemote spotifyAppRemote) {
                         mSpotifyAppRemote = spotifyAppRemote;
+                        mSpotifyAppRemote.getPlayerApi().getPlayerState().setResultCallback(playerState -> {
+                            current_uri = playerState.track.uri;
+                        });
+                        if(flag == 1){
+                            String val = FirebaseAuth.getInstance().getUid()+"_"+current_uri;
+                            firebaseFirestore.collection(placeenglishname).document("UserLists")
+                                    .update(FirebaseAuth.getInstance().getUid(), val);
+                        }
                         connected();
                     }
 
@@ -274,8 +283,10 @@ public class homeActivity extends AppCompatActivity {
                                         bitmap -> {
                                             img_track.setImageBitmap(bitmap);
                                         });
-                        if(placeenglishname != null)
+                        if(placeenglishname != null && !current_uri.equals(track.uri)) {
                             dbFunction(track);
+                            current_uri = track.uri;
+                        }
                     }
                     else{
                         TextView tv_title = findViewById(R.id.title_txt);
@@ -291,22 +302,24 @@ public class homeActivity extends AppCompatActivity {
         firebaseFirestore.collection(placeenglishname).document("UserLists")
                 .update(FirebaseAuth.getInstance().getUid(), val);
 
-//        firebaseFirestore.collection(placeenglishname).document("UserLists").get()
-//                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-//                    @Override
-//                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-//                        DocumentSnapshot doc = documentSnapshot;
-//                        for (Object value : doc.getData().values()) {
-//                            Log.d(TAG, "uid : " + value.toString());
-//                            String parse[] = value.toString().split("_");
-//                            String uid = parse[0];
-//                            String uri = parse[1];
-//                            if(track.uri.equals(uri) && !FirebaseAuth.getInstance().getUid().equals(uid)){
-//                                finish();
-//                            }
-//                        }
-//                    }
-//                });
+        firebaseFirestore.collection(placeenglishname).document("UserLists").get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        DocumentSnapshot doc = documentSnapshot;
+                        for (Object value : doc.getData().values()) {
+                            Log.d(TAG, "uid : " + value.toString());
+                            String parse[] = value.toString().split("_");
+                            String uid = parse[0];
+                            String uri = parse[1];
+                            if(track.uri.equals(uri) && !FirebaseAuth.getInstance().getUid().equals(uid)){
+                                Intent intent = new Intent(getApplicationContext(),EventActivity.class);
+                                intent.putExtra("uid",uid);
+                                startActivity(intent);
+                            }
+                        }
+                    }
+                });
     }
 
     //프래그먼트 교체가 일어나는 실행문

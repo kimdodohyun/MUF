@@ -21,13 +21,17 @@
         android:theme="@style/Theme.AppCompat.NoActionBar"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".EventActivity"
+            android:exported="true"
+            android:theme="@android:style/Theme.Dialog"/>
+        <activity
             android:name=".ChatActivity"
             android:exported="true"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".SetZone.LocationListPopUpActivity"
-            android:theme="@android:style/Theme.Dialog"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@android:style/Theme.Dialog" />
         <activity
             android:name=".SetZone.SetZoneActivity"
             android:exported="false" />

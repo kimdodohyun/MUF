@@ -10,17 +10,22 @@ public class UserModel {
     private String uid;
     private ArrayList<String> myzonelist;
     private int postcount;
+    private int songcount;
 
     public UserModel(){}
     public UserModel(String nickName, String profileImageUrl, String profileMusicUrl,
-                     String uid, ArrayList<String> Myzonelist, int Postcount) {
+                     String uid, ArrayList<String> Myzonelist, int Postcount, int Songcount) {
         this.nickName = nickName;
         this.profileImageUrl = profileImageUrl;
         this.profileMusicUrl = profileMusicUrl;
         this.uid = uid;
         this.myzonelist = Myzonelist;
         this.postcount = Postcount;
+        this.songcount = Songcount;
     }
+
+    public int getSongcount() { return songcount; }
+    public void setSongcount(int songcount) { this.songcount = songcount; }
 
     public String getNickName() { return nickName; }
     public void setNickName(String nickName) { this.nickName = nickName; }

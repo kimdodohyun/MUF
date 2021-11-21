@@ -81,7 +81,7 @@ public class SettingUserActivity extends AppCompatActivity {
                             while(!image_url.isComplete());
 
                             UserModel user = new UserModel(et_nickname.getText().toString(), image_url.getResult().toString(),
-                                    null,uid, null, 0);
+                                    null,uid, null, 0, 0);
 
                             mDatabase.collection("Users").document(uid).collection("Myinfo")
                                     .document("info").set(user)
@@ -106,7 +106,7 @@ public class SettingUserActivity extends AppCompatActivity {
                 }
                 else{
                     UserModel user = new UserModel(et_nickname.getText().toString(), null,
-                            null,uid, null, 0);
+                            null,uid, null, 0, 0);
 
                     mDatabase.collection("Users").document(uid).set(user)
                             .addOnSuccessListener(new OnSuccessListener<Void>() {

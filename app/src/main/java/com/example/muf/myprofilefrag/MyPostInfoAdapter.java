@@ -1,7 +1,6 @@
 package com.example.muf.myprofilefrag;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,32 +15,40 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.muf.R;
-import com.example.muf.communityfrag.post.PostFireBase;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
+import com.example.muf.communityfrag.post.Music;
 
 import java.util.ArrayList;
 
-public class MyPostInfoAdapter extends RecyclerView.Adapter<MyPostInfoAdapter.MyPostInfoViewHolder> {
-    private ArrayList<PostFireBase> arrayList;
+public class MyPostInfoAdapter extends RecyclerView.Adapter<MyPostInfoAdapter.PostInfoViewHolder> {
+
+    public interface OnButtonItemClickEventListener{
+        void onButtonItemClick(int position, int flag);
+    }
+    private OnButtonItemClickEventListener mButtonItemClickListener;
+
+    public void setButtonItemClickListener(OnButtonItemClickEventListener a_listener){
+        mButtonItemClickListener = a_listener;
+    }
+
+    private ArrayList<Music> arrayList;
     private Context context;
 
-    public MyPostInfoAdapter(ArrayList<PostFireBase> arrayList, Context context) {
+    public MyPostInfoAdapter(ArrayList<Music> arrayList, Context context) {
         this.arrayList = arrayList;
         this.context = context;
     }
 
     @NonNull
     @Override
-    public MyPostInfoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public PostInfoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_itme_myprofile, parent, false);
-        MyPostInfoViewHolder holder = new MyPostInfoViewHolder(view);
+        PostInfoViewHolder holder = new PostInfoViewHolder(view, mButtonItemClickListener);
 
         return holder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyPostInfoViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull PostInfoViewHolder holder, int position) {
         if(arrayList.get(position).getProfileimg() != null) {
             Glide.with(holder.itemView)
                     .load(arrayList.get(position).getProfileimg()) //ProfileImage
@@ -61,16 +68,16 @@ public class MyPostInfoAdapter extends RecyclerView.Adapter<MyPostInfoAdapter.My
         return (arrayList != null ? arrayList.size() : 0);
     }
 
-    public class MyPostInfoViewHolder extends RecyclerView.ViewHolder {
+    public class PostInfoViewHolder extends RecyclerView.ViewHolder {
         ImageView iv_profile;
         TextView tv_usernickname;
         TextView tv_albumtitle;
         TextView tv_artist;
         ImageView album_imag;
         TextView tv_inputtext;
-        ImageButton ib_option;
+        ImageButton im_optionButton;
 
-        public MyPostInfoViewHolder(@NonNull View itemView) {
+        public PostInfoViewHolder(@NonNull View itemView, OnButtonItemClickEventListener mButtonItemClickListener) {
             super(itemView);
             this.iv_profile = itemView.findViewById(R.id.my_profile_picture);
             this.tv_usernickname = itemView.findViewById(R.id.my_nickname);
@@ -78,22 +85,22 @@ public class MyPostInfoAdapter extends RecyclerView.Adapter<MyPostInfoAdapter.My
             this.tv_artist = itemView.findViewById(R.id.artistname);
             this.album_imag = itemView.findViewById(R.id.album_image);
             this.tv_inputtext = itemView.findViewById(R.id.inputtext);
-            this.ib_option = itemView.findViewById(R.id.post_option_button);
-
-            ib_option.setOnClickListener(new View.OnClickListener() {
+            this.im_optionButton = itemView.findViewById(R.id.post_option_button);
+            im_optionButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Log.d("옵션버튼클릭", "onClick: " + "진입");
                     PopupMenu popupMenu = new PopupMenu(context.getApplicationContext(), view);
                     popupMenu.getMenuInflater().inflate(R.menu.popupmenu, popupMenu.getMenu());
                     popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                         @Override
                         public boolean onMenuItemClick(MenuItem menuItem) {
+                            final int position = getAdapterPosition();
                             switch (menuItem.getItemId()){
                                 case R.id.edit:
+                                    mButtonItemClickListener.onButtonItemClick(position, 0);
                                     break;
                                 case R.id.remove:
-                                    removePost(position);
+                                    mButtonItemClickListener.onButtonItemClick(position, 1);
                                     break;
                             }
                             return false;
@@ -103,17 +110,5 @@ public class MyPostInfoAdapter extends RecyclerView.Adapter<MyPostInfoAdapter.My
                 }
             });
         }
-    }
-
-    public void removePost(int position){
-        String uid = arrayList.get(position).getUid();
-        int postnumber = arrayList.get(position).getNumber();
-
-        //Users/uid/MyPostLists/해당자동id문서 삭제
-        //where쿼리문으로 현재 postnumber를 가진 문서 찾기
-        FirebaseFirestore db;
-        db = FirebaseFirestore.getInstance();
-        db.collection("Users").document(uid).collection("MyPostLists")
-                .whereEqualTo("number", postnumber).get().
     }
 }

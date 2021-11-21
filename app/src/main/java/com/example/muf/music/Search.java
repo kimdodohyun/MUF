@@ -1,5 +1,7 @@
 package com.example.muf.music;
 
+import com.example.muf.model.Music;
+
 import java.util.List;
 
 import kaaes.spotify.webapi.android.models.Track;

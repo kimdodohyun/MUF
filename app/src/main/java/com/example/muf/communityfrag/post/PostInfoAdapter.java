@@ -16,10 +16,10 @@ import com.example.muf.R;
 import java.util.ArrayList;
 
 public class PostInfoAdapter extends RecyclerView.Adapter<PostInfoAdapter.PostInfoViewHolder> {
-    private ArrayList<PostFireBase> arrayList;
+    private ArrayList<Music> arrayList;
     private Context context;
 
-    public PostInfoAdapter(ArrayList<PostFireBase> arrayList, Context context) {
+    public PostInfoAdapter(ArrayList<Music> arrayList, Context context) {
         this.arrayList = arrayList;
         this.context = context;
     }

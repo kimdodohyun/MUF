@@ -1,4 +1,4 @@
-package com.example.muf.music;
+package com.example.muf.model;
 
 import java.io.Serializable;
 
@@ -20,6 +20,8 @@ public class Music implements Serializable {
         this.artist_name = artist_name;
         this.artist_id = artist_id;
     }
+
+    public Music(){}
 
     public String getId() {
         return id;

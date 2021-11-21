@@ -17,7 +17,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.muf.R;
 import com.example.muf.communityfrag.post.AddPostActivity;
-import com.example.muf.communityfrag.post.PostFireBase;
+import com.example.muf.communityfrag.post.Music;
 import com.example.muf.communityfrag.post.PostInfoAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -33,14 +33,15 @@ public class Community_frag extends Fragment {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
-    private ArrayList<PostFireBase> arrayList;
+    private ArrayList<Music> arrayList;
     private FirebaseFirestore firebaseFirestore;
-    private PostFireBase postFireBase;
+    private Music postFireBase;
     private SwipeRefreshLayout swipeRefreshLayout;
     private View view;
     static final String TAG = "COMMUNITY";
     private String kname = "";
     private String ename = "";
+    private int flag = -1;
     private TextView No_textview, Set_textview;
 
     public static Community_frag newinstance(){
@@ -72,7 +73,7 @@ public class Community_frag extends Fragment {
         Log.d("CommuFrag onCreateView", "kimgijeong");
         if(getArguments() != null){ //HomeActivity에서 bundle받기
             Bundle bundle = getArguments();
-            int flag = bundle.getInt("flag");
+            flag = bundle.getInt("flag");
             kname = bundle.getString("name");
             ename = bundle.getString("englishname");
             Log.d("CommuFrag onCreateView", "locationname = " + kname);
@@ -92,9 +93,9 @@ public class Community_frag extends Fragment {
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         arrayList = new ArrayList<>(); //PostFireBase 객체를 담을 어레이 리스트(어댑터쪽으로)
-        postFireBase = new PostFireBase();
+        postFireBase = new Music();
         //파이어베이스테서 게시글 정보 가져오기
-        if(kname.length() > 0){ //Zone이 설정되었다는 것
+        if(flag == 1){ //Zone이 설정되었다는 것
             firebaseFirestore = FirebaseFirestore.getInstance();
             firebaseFirestore.collection(ename).document("PostLists").collection("contents")
                     .orderBy("timestamp", Query.Direction.DESCENDING)
@@ -103,7 +104,7 @@ public class Community_frag extends Fragment {
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if(task.isSuccessful()){
                         for(QueryDocumentSnapshot document : task.getResult()){
-                            postFireBase = document.toObject(PostFireBase.class);
+                            postFireBase = document.toObject(Music.class);
                             arrayList.add(postFireBase);
                         }
                         adapter.notifyDataSetChanged();
@@ -120,7 +121,7 @@ public class Community_frag extends Fragment {
     View.OnClickListener onClickListener = (v) -> {
         switch (v.getId()){
             case R.id.Go_write_post:
-                if(ename.length()>0){
+                if(flag == 1){
                     Intent intent = new Intent(getActivity(), AddPostActivity.class);
                     intent.putExtra("englishname", ename);
                     startActivity(intent);
@@ -138,7 +139,7 @@ public class Community_frag extends Fragment {
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if(task.isSuccessful()){
                         for(QueryDocumentSnapshot document : task.getResult()){
-                            postFireBase = document.toObject(PostFireBase.class);
+                            postFireBase = document.toObject(Music.class);
                             arrayList.add(postFireBase);
                         }
                         adapter.notifyDataSetChanged();

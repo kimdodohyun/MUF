@@ -1,7 +1,5 @@
 package com.example.muf;
 
-import android.content.Intent;
-import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,14 +11,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.example.muf.SetZone.SetZoneActivity;
-
 public class Home_frag extends Fragment {
     private final static String TAG = "HOME";
     private View view;
     private TextView No_textview, Set_textview;
     private int flag = -1;
-    private String locationname;
+    private String kname;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -50,11 +46,11 @@ public class Home_frag extends Fragment {
         if(getArguments() != null){ //HomeActivity에서 bundle받기
             Bundle bundle = getArguments();
             flag = bundle.getInt("flag");
-            locationname = bundle.getString("name");
+            kname = bundle.getString("name");
             Log.d("HomeFrag onCreateView", "flagvalue = " + flag +" kimgijeong");
             if(flag == 1){ //Zone이 설정 된 경우
                 No_textview.setVisibility(View.INVISIBLE);
-                Set_textview.setText(locationname);
+                Set_textview.setText(kname);
                 Set_textview.setVisibility(View.VISIBLE);
             }
             else if(flag == 0){

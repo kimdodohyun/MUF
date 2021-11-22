@@ -29,7 +29,9 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 
 public class SettingUserActivity extends AppCompatActivity {
     private String uid;
@@ -98,6 +100,13 @@ public class SettingUserActivity extends AppCompatActivity {
                                         }
                                     });
 
+                            Map<String, Object> friendList = new HashMap<>();
+                            Map<String, Object> friendRequestList = new HashMap<>();
+                            friendList.put("friends", Arrays.asList());
+                            friendRequestList.put("requestlist",Arrays.asList());
+                            mDatabase.collection("FriendLists").document(uid).set(friendList);
+                            mDatabase.collection("FriendRequestLists").document(uid).set(friendRequestList);
+
                             Intent intent = new Intent(getApplicationContext(),homeActivity.class);
                             startActivity(intent);
                             finish();
@@ -121,6 +130,13 @@ public class SettingUserActivity extends AppCompatActivity {
                                     Log.w("setting", "Failure: " ,e);
                                 }
                             });
+
+                    Map<String, Object> friendList = new HashMap<>();
+                    Map<String, Object> friendRequestList = new HashMap<>();
+                    friendList.put("friends", Arrays.asList());
+                    friendRequestList.put("requestlist",Arrays.asList());
+                    mDatabase.collection("FriendLists").document(uid).set(friendList);
+                    mDatabase.collection("FriendRequestLists").document(uid).set(friendRequestList);
 
                     Intent intent = new Intent(getApplicationContext(),homeActivity.class);
                     startActivity(intent);

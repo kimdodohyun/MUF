@@ -118,6 +118,7 @@ public class SetZoneActivity extends AppCompatActivity {
             }
         });
 
+        //확인 버튼 누르면
         button = findViewById(R.id.set_location_button);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -263,7 +264,7 @@ public class SetZoneActivity extends AppCompatActivity {
 
             if(distance > 0 && distance < limitdistance) flag = 1; //Set zone;
             else flag = 0;
-            flag =1;
+            flag = 1;
 
             if(currentMarker != null) currentMarker.remove();
 

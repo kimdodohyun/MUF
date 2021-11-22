@@ -13,13 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.muf.R;
-import com.example.muf.homeActivity;
-import com.example.muf.music.Music;
-import com.spotify.protocol.types.Image;
 
 import java.util.ArrayList;
 
-import kaaes.spotify.webapi.android.SpotifyApi;
 
 public class StreamingRecyclerAdapter extends RecyclerView.Adapter<StreamingRecyclerAdapter.ViewHolder> implements OnItemClickEventListener {
     private ArrayList<Stream> streamList;

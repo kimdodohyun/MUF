@@ -1,6 +1,5 @@
-package com.example.muf;
+package com.example.muf.music;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,11 +10,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.muf.music.Music;
-import com.example.muf.music.ResultListScrollListener;
-import com.example.muf.music.Search;
-import com.example.muf.music.SearchPresenter;
-import com.example.muf.music.SearchResultsAdapter;
+import com.example.muf.R;
+import com.example.muf.homeActivity;
+import com.example.muf.model.Music;
 
 import java.util.List;
 
@@ -75,9 +72,10 @@ public class SearchActivity extends AppCompatActivity implements Search.View {
         });
 
 
-        // Setup search results list
+        // 검색 결과 리스트 리사이클러뷰에 띄워주기
         mAdapter = new SearchResultsAdapter(this, new SearchResultsAdapter.ItemSelectedListener() {
             @Override
+            //검색 결과 리스트 중 원하는 아이템 클릭시
             public void onItemSelected(View itemView, Track item) {
                 Music selected_music;
                 selected_music = mActionListener.selectTrack(item);

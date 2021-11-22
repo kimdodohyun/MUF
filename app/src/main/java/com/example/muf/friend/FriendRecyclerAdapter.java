@@ -119,7 +119,5 @@ public class FriendRecyclerAdapter extends RecyclerView.Adapter<FriendRecyclerAd
         }
     }
 
-    public UserModel getItem(int pos){
-        return friendList.get(pos);
-    }
+    public UserModel getItem(int pos){ return friendList.get(pos); }
 }

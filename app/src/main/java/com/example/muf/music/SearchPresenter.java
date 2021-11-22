@@ -9,6 +9,8 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import com.example.muf.model.Music;
+
 import java.util.List;
 
 import kaaes.spotify.webapi.android.SpotifyApi;

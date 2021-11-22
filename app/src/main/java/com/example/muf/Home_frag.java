@@ -62,7 +62,6 @@ public class Home_frag extends Fragment {
         db = FirebaseFirestore.getInstance();
         uriList = new ArrayList<>();
         streamList = new ArrayList<>();
-        streamList = new ArrayList<>();
         spotifyApi = new SpotifyApi();
         return view;
     }

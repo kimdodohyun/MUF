@@ -4,49 +4,55 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.muf.R;
 import com.example.muf.communityfrag.post.PostFireBase;
-import com.example.muf.communityfrag.post.PostInfoAdapter;
 import com.example.muf.model.UserModel;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+
 import java.util.ArrayList;
 
-public class Myprofile_frag extends Fragment implements PopupMenu.OnMenuItemClickListener {
+public class Myprofile_frag extends Fragment {
 
     static final String TAG = "MYPROFILE";
     private View view;
-    private TextView postcount;
     private RecyclerView recyclerView;
-    private RecyclerView.Adapter adapter;
+    private MyPostInfoAdapter adapter;
     private RecyclerView.LayoutManager layoutManager;
     private String user_uid;
     private PostFireBase postFireBase;
     private ArrayList<PostFireBase> arrayList;
     private UserModel userinfo;
-    private DocumentReference docRef;
     private FirebaseAuth firebaseAuth;
     private FirebaseFirestore db;
+    private FragmentManager fm;
+    private FragmentTransaction ft;
+    private int countMyPost;
+    private TextView postCount;
+    private int countMySong;
+    private TextView songCount;
 
     @Nullable
     @Override
@@ -54,7 +60,9 @@ public class Myprofile_frag extends Fragment implements PopupMenu.OnMenuItemClic
         view = inflater.inflate(R.layout.myprofile_layout, container, false);
 
         view.findViewById(R.id.profile_edit_but).setOnClickListener(onClickListener);
-        postcount = view.findViewById(R.id.community_num);
+        view.findViewById(R.id.favoriteSongButton).setOnClickListener(onClickListener);
+        postCount = view.findViewById(R.id.community_num);
+        songCount = view.findViewById(R.id.fsong_num);
         return view;
     }
 
@@ -64,6 +72,9 @@ public class Myprofile_frag extends Fragment implements PopupMenu.OnMenuItemClic
                 Intent intent = new Intent(getActivity(), ProfileEditActivity.class);
                 startActivity(intent);
                 break;
+            case R.id.favoriteSongButton:
+                Intent intent1 = new Intent(getActivity(), MySongListActivity.class);
+                startActivity(intent1);
         }
     };
 
@@ -79,11 +90,13 @@ public class Myprofile_frag extends Fragment implements PopupMenu.OnMenuItemClic
         firebaseAuth = FirebaseAuth.getInstance();
         user_uid = firebaseAuth.getUid();
         userinfo = new UserModel();
+        fm = getParentFragmentManager();
+        ft = fm.beginTransaction();
 
         //파이어베이스 Users/uid/Myinfo/info불러오기
-        //내 게시글 갯수 TextView에 설정하기 위함
+        //내 게시글 갯수 TextView에 설정하기 위함 (countMyPost에 정수형으로 저장)
         db = FirebaseFirestore.getInstance();
-        docRef = db.collection("Users").document(user_uid)
+        DocumentReference docRef = db.collection("Users").document(user_uid)
                 .collection("Myinfo").document("info");
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -92,8 +105,12 @@ public class Myprofile_frag extends Fragment implements PopupMenu.OnMenuItemClic
                     DocumentSnapshot document = task.getResult();
                     if(document.exists()){
                         userinfo = document.toObject(UserModel.class);
-                        String num_to_str = String.valueOf(userinfo.getPostcount());
-                        postcount.setText(num_to_str);
+                        countMyPost = userinfo.getPostcount();
+                        countMySong = userinfo.getSongcount();
+                        String num_to_str = String.valueOf(countMyPost);
+                        postCount.setText(num_to_str);
+                        num_to_str = String.valueOf(countMySong);
+                        songCount.setText(num_to_str);
                     }
                 }
             }
@@ -105,6 +122,7 @@ public class Myprofile_frag extends Fragment implements PopupMenu.OnMenuItemClic
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(!arrayList.isEmpty()) arrayList.clear();
                 if(task.isSuccessful()){
                     for(QueryDocumentSnapshot document : task.getResult()){
                         postFireBase = document.toObject(PostFireBase.class);
@@ -118,10 +136,83 @@ public class Myprofile_frag extends Fragment implements PopupMenu.OnMenuItemClic
         });
         adapter = new MyPostInfoAdapter(arrayList, getActivity().getApplicationContext());
         recyclerView.setAdapter(adapter); //리사이클러뷰에 어댑터 연결
+
+        adapter.setButtonItemClickListener(new MyPostInfoAdapter.OnButtonItemClickEventListener() {
+            @Override
+            public void onButtonItemClick(int position, int flag) {
+                final PostFireBase item = arrayList.get(position);
+                final int option = flag;
+                switch(option){
+                    case 0: // edit
+                        break;
+                    case 1: //remove
+                        remove(item);
+                        break;
+                }
+            }
+        });
     }
 
-    @Override
-    public boolean onMenuItemClick(MenuItem menuItem) {
-        return false;
+    private void remove(PostFireBase item){
+        final int postnum = item.getNumber();
+        final String ename = item.getEname();
+        //내 게시글 MyPostLists에서 삭제
+        db.collection("Users").document(user_uid).collection("MyPostLists")
+                .whereEqualTo("number", postnum).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        for(QueryDocumentSnapshot documentSnapshot : task.getResult()){
+                            DocumentReference defRef = documentSnapshot.getReference();
+                            defRef.delete();
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, "onFailure: " + "실패");
+                    }
+                });
+        //내 게시글 Location에서 삭제
+        db.collection(ename).document("PostLists").collection("contents")
+                .whereEqualTo("number", postnum)
+                .whereEqualTo("uid", user_uid).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        for(QueryDocumentSnapshot documentSnapshot : task.getResult()){
+                            DocumentReference defRef = documentSnapshot.getReference();
+                            defRef.delete();
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, "onFailure: " + "실패");
+                    }
+                });
+        //지우려는 게시물의 postnum보다 높은 게시글들의 postnum을 1씩 감소
+        db.collection("Users").document(user_uid).collection("MyPostLists")
+                .whereGreaterThan("number", postnum).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        for(QueryDocumentSnapshot documentSnapshot : task.getResult()){
+                            DocumentReference defRef = documentSnapshot.getReference();
+                            defRef.update("number", FieldValue.increment(-1));
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, "onFailure: " + "실패");
+                    }
+                });
+        //전체 게시글 숫자 postcount도 1감소
+        db.collection("Users").document(user_uid).collection("Myinfo")
+                .document("info").update("postcount", FieldValue.increment(-1));
     }
 }

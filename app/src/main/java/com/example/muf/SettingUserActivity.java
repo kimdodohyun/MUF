@@ -117,7 +117,8 @@ public class SettingUserActivity extends AppCompatActivity {
                     UserModel user = new UserModel(et_nickname.getText().toString(), null,
                             null,uid, null, 0, 0);
 
-                    mDatabase.collection("Users").document(uid).set(user)
+                    mDatabase.collection("Users").document(uid).collection("Myinfo")
+                            .document("info").set(user)
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {

@@ -70,6 +70,7 @@ public class homeActivity extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     private String user_uid;
     private String current_uri;
+    private ImageButton friendRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,11 +83,20 @@ public class homeActivity extends AppCompatActivity {
         btn_previous = findViewById(R.id.btn_previous);
         btn_next = findViewById(R.id.btn_next);
         imageButton = findViewById(R.id.search_location);
+        friendRequest = findViewById(R.id.friend_request);
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), LocationListPopUpActivity.class);
                 startActivityForResult(intent, 12161531);
+            }
+        });
+
+        friendRequest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(),FriendRequestActivity.class);
+                startActivity(intent);
             }
         });
 

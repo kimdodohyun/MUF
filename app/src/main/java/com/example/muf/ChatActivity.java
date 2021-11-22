@@ -66,7 +66,7 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
-        FirebaseFirestore.getInstance().collection("Users").document(uid).get()
+        FirebaseFirestore.getInstance().collection("Users").document(uid).collection("Myinfo").document("info").get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -74,7 +74,7 @@ public class ChatActivity extends AppCompatActivity {
                         myInfo = doc.toObject(UserModel.class);
                     }
                 });
-        FirebaseFirestore.getInstance().collection("Users").document(destinationUid).get()
+        FirebaseFirestore.getInstance().collection("Users").document(destinationUid).collection("Myinfo").document("info").get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {

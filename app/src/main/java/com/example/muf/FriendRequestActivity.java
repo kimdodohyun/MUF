@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import com.example.muf.friend.FriendRequestRecyclerAdapter;
@@ -41,6 +42,11 @@ public class FriendRequestActivity extends AppCompatActivity {
         manager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(manager);
         requestList = new ArrayList<>();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
 
         FirebaseFirestore.getInstance().collection("FriendRequestLists").document(FirebaseAuth.getInstance().getUid())
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {

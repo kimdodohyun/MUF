@@ -27,12 +27,16 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 public class ChatActivity extends AppCompatActivity {
     private Button btn_send;
@@ -44,6 +48,7 @@ public class ChatActivity extends AppCompatActivity {
     private UserModel myInfo;
     private UserModel friendInfo;
     public List<ChatModel.Comment> comments;
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm");
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,6 +95,7 @@ public class ChatActivity extends AppCompatActivity {
                 ChatModel.Comment comment = new ChatModel.Comment();
                 comment.uid = uid;
                 comment.message = et_message.getText().toString();
+                comment.timestamp = ServerValue.TIMESTAMP;
                 FirebaseDatabase.getInstance().getReference().child("ChatRooms").child(chatRoomId).child("comments").push().setValue(comment);
 
                 et_message.setText("");
@@ -174,9 +180,15 @@ public class ChatActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+            long unixTime = (long) comments.get(position).timestamp;
+            Date date = new Date(unixTime);
+            simpleDateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
+            String time =simpleDateFormat.format(date);
+
             if(comments.get(position).uid.equals(uid)) {
                 ((MessageViewHolder) holder).tv_message_my.setText(comments.get(position).message);
                 ((MessageViewHolder) holder).tv_chatName_my.setText(myInfo.getNickName());
+                ((MessageViewHolder) holder).tv_date_my.setText(time);
                 if(myInfo.getProfileImageUrl() != null){
                     Glide.with(holder.itemView.getContext()).load(myInfo.getProfileImageUrl()).into(((MessageViewHolder) holder).img_chatProfile_my);
                 }
@@ -184,6 +196,7 @@ public class ChatActivity extends AppCompatActivity {
             else{
                 ((MessageViewHolder) holder).tv_message_friend.setText(comments.get(position).message);
                 ((MessageViewHolder) holder).tv_chatName_friend.setText(friendInfo.getNickName());
+                ((MessageViewHolder) holder).tv_date_friend.setText(time);
                 if(friendInfo.getProfileImageUrl() != null){
                     Glide.with(holder.itemView.getContext()).load(friendInfo.getProfileImageUrl()).into(((MessageViewHolder) holder).img_chatProfile_friend);
                 }
@@ -200,6 +213,8 @@ public class ChatActivity extends AppCompatActivity {
             public TextView tv_message_friend;
             public TextView tv_chatName_my;
             public TextView tv_chatName_friend;
+            public TextView tv_date_my;
+            public TextView tv_date_friend;
             public ImageView img_chatProfile_my;
             public ImageView img_chatProfile_friend;
             public MessageViewHolder(View view) {
@@ -208,6 +223,8 @@ public class ChatActivity extends AppCompatActivity {
                 tv_message_friend = (TextView) view.findViewById(R.id.tv_message_other);
                 tv_chatName_my = (TextView) view.findViewById(R.id.tv_chatName_my);
                 tv_chatName_friend = (TextView) view.findViewById(R.id.tv_chatName_other);
+                tv_date_my = (TextView) view.findViewById(R.id.tv_date_my);
+                tv_date_friend = (TextView) view.findViewById(R.id.tv_date_other);
                 img_chatProfile_my = (ImageView) view.findViewById(R.id.img_chatProfile_my);
                 img_chatProfile_friend = (ImageView) view.findViewById(R.id.img_chatProfile_other);
             }

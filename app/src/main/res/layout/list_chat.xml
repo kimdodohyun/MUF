@@ -15,14 +15,15 @@
             android:id="@+id/img_chatList"
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:scaleType="centerCrop"
             app:srcCompat="@drawable/ic_baseline_portrait_24" />
 
         <TextView
             android:id="@+id/tv_chattingName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
             android:textColor="@color/white"
+            android:layout_gravity="center"
             android:text="name"/>
     </LinearLayout>
 

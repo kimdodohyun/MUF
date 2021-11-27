@@ -72,7 +72,10 @@ public class Chatting_frag extends Fragment {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     for(DataSnapshot item : snapshot.getChildren()){
-                        chatModels.add(item.getValue(ChatModel.class));
+                        ChatModel newChat = item.getValue(ChatModel.class);
+                        if(!newChat.comments.isEmpty()) {
+                            chatModels.add(newChat);
+                        }
                     }
                     notifyDataSetChanged();
                 }

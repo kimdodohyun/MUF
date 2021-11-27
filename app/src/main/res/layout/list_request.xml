@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:padding="20dp">
+
+        <!--프로필 사진-->
+        <ImageView
+            android:id="@+id/request_profile"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            app:srcCompat="@drawable/ic_baseline_portrait_24"
+            android:scaleType="centerCrop"/>
+
+        <!--이름-->
+        <TextView
+            android:id="@+id/request_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxWidth="250dp"
+            android:layout_marginLeft="10dp"
+            android:textColor="#000"
+            android:singleLine="true"/>
+
+        <Button
+            android:background="@drawable/buttonshape"
+            android:id="@+id/request_confirm"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="120dp"
+            android:text="수락"
+            />
+
+        <Button
+            android:background="@drawable/buttonshape"
+            android:id="@+id/reuqest_reject"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="10dp"
+            android:text="거절"
+            />
+
+    </LinearLayout>
+</LinearLayout>

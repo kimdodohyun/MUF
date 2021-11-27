@@ -29,7 +29,9 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 
 public class SettingUserActivity extends AppCompatActivity {
     private String uid;
@@ -98,6 +100,13 @@ public class SettingUserActivity extends AppCompatActivity {
                                         }
                                     });
 
+                            Map<String, Object> friendList = new HashMap<>();
+                            Map<String, Object> friendRequestList = new HashMap<>();
+                            friendList.put("friends", Arrays.asList());
+                            friendRequestList.put("requestlist",Arrays.asList());
+                            mDatabase.collection("FriendLists").document(uid).set(friendList);
+                            mDatabase.collection("FriendRequestLists").document(uid).set(friendRequestList);
+
                             Intent intent = new Intent(getApplicationContext(),homeActivity.class);
                             startActivity(intent);
                             finish();
@@ -108,7 +117,8 @@ public class SettingUserActivity extends AppCompatActivity {
                     UserModel user = new UserModel(et_nickname.getText().toString(), null,
                             null,uid, null, 0, 0, 0);
 
-                    mDatabase.collection("Users").document(uid).set(user)
+                    mDatabase.collection("Users").document(uid).collection("Myinfo")
+                            .document("info").set(user)
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {
@@ -121,6 +131,13 @@ public class SettingUserActivity extends AppCompatActivity {
                                     Log.w("setting", "Failure: " ,e);
                                 }
                             });
+
+                    Map<String, Object> friendList = new HashMap<>();
+                    Map<String, Object> friendRequestList = new HashMap<>();
+                    friendList.put("friends", Arrays.asList());
+                    friendRequestList.put("requestlist",Arrays.asList());
+                    mDatabase.collection("FriendLists").document(uid).set(friendList);
+                    mDatabase.collection("FriendRequestLists").document(uid).set(friendRequestList);
 
                     Intent intent = new Intent(getApplicationContext(),homeActivity.class);
                     startActivity(intent);

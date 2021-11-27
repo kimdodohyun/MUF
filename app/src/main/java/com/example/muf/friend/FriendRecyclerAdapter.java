@@ -103,6 +103,7 @@ public class FriendRecyclerAdapter extends RecyclerView.Adapter<FriendRecyclerAd
 
         void onBind(UserModel item){
             name.setText(item.getNickName());
+            name.setSelected(true);
             if(item.getProfileImageUrl() != null){
                 Picasso.get().load(item.getProfileImageUrl()).into(profile);
             }

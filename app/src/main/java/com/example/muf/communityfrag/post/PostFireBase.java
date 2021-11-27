@@ -3,7 +3,7 @@ package com.example.muf.communityfrag.post;
 import com.google.firebase.Timestamp;
 
 //사용자프로필사진, 사용자이름, 앨범title, 앨범img, inputtext를 넘겨야함
-public class Music {
+public class PostFireBase {
     private String profileimg;
     private String username;
     private String albumtitle;
@@ -16,10 +16,10 @@ public class Music {
     private int number;
     private String ename;
 
-    public Music(){}
+    public PostFireBase(){}
 
-    public Music(String Profileimg, String Username, String Albumtitle, String Artist, String Albumimg,
-                 String Inputtext, Timestamp Timestamp, String Uid, String Uri, int Number, String Ename){
+    public PostFireBase(String Profileimg, String Username, String Albumtitle, String Artist, String Albumimg,
+                        String Inputtext, Timestamp Timestamp, String Uid, String Uri, int Number, String Ename){
         this.profileimg = Profileimg;
         this.username = Username;
         this.albumtitle = Albumtitle;

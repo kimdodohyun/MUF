@@ -16,24 +16,24 @@ import com.example.muf.R;
 import java.util.ArrayList;
 
 public class PostInfoAdapter extends RecyclerView.Adapter<PostInfoAdapter.PostInfoViewHolder> {
-    private ArrayList<Music> arrayList;
+    private ArrayList<PostFireBase> arrayList;
     private Context context;
+    public interface OnItemClickEventListener{ void onItemClick(View view, int pos);}
+    public interface OnImageClickEventListener{void onItemClick(int pos);}
     private OnItemClickEventListener itemClickEventListener;
+    private OnImageClickEventListener imageClickEventListener;
 
-    public PostInfoAdapter(ArrayList<Music> arrayList, Context context) {
+    public PostInfoAdapter(ArrayList<PostFireBase> arrayList, Context context) {
         this.arrayList = arrayList;
         this.context = context;
     }
-    
-    public interface OnItemClickEventListener{
-        void onItemClick(View view, int pos);
-    }
+
 
     @NonNull
     @Override
     public PostInfoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false);
-        PostInfoViewHolder holder = new PostInfoViewHolder(view,itemClickEventListener);
+        PostInfoViewHolder holder = new PostInfoViewHolder(view,itemClickEventListener, imageClickEventListener);
 
         return holder;
     }
@@ -57,6 +57,9 @@ public class PostInfoAdapter extends RecyclerView.Adapter<PostInfoAdapter.PostIn
     public void setOnItemClickListener(OnItemClickEventListener listener){
         itemClickEventListener = listener;
     }
+    public void setOnImageClickListener(OnImageClickEventListener ImageListener){
+        imageClickEventListener = ImageListener;
+    }
 
     @Override
     public int getItemCount() {
@@ -71,7 +74,9 @@ public class PostInfoAdapter extends RecyclerView.Adapter<PostInfoAdapter.PostIn
         ImageView album_imag;
         TextView tv_inputtext;
 
-        public PostInfoViewHolder(@NonNull View itemView, final OnItemClickEventListener listener) {
+        public PostInfoViewHolder(@NonNull View itemView
+                , final OnItemClickEventListener listener
+                , final OnImageClickEventListener iv_listener) {
             super(itemView);
             this.iv_profile = itemView.findViewById(R.id.publisher_profile_picture);
             this.tv_usernickname = itemView.findViewById(R.id.publisher_nickname);
@@ -86,6 +91,15 @@ public class PostInfoAdapter extends RecyclerView.Adapter<PostInfoAdapter.PostIn
                     final int pos = getAdapterPosition();
                     if(pos != RecyclerView.NO_POSITION){
                         listener.onItemClick(view, pos);
+                    }
+                }
+            });
+            iv_profile.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    final int pos = getAdapterPosition();
+                    if(pos != RecyclerView.NO_POSITION){
+                        iv_listener.onItemClick(pos);
                     }
                 }
             });

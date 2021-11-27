@@ -107,7 +107,7 @@ public class AddPostActivity extends AppCompatActivity {
 
         if(inputtext.length() > 0){
             //사용자프로필사진, 사용자이름, 앨범title, artist, 앨범img, inputtext를 넘겨야함
-            Music postInfo = new Music(userprofileimg, username, albumtitle, artist,
+            PostFireBase postInfo = new PostFireBase(userprofileimg, username, albumtitle, artist,
                     albumimg, inputtext, timestamp, user_uid, uri, postnumber, Ename);
             uploader(postInfo, Ename);
         } else{
@@ -115,7 +115,7 @@ public class AddPostActivity extends AppCompatActivity {
         }
     }
 
-    private void uploader(Music postInfo, String Ename){ //파이어스토어에 작성내용 업로드
+    private void uploader(PostFireBase postInfo, String Ename){ //파이어스토어에 작성내용 업로드
         db.collection(Ename).document("PostLists").collection("contents").add(postInfo) // 현재장소PostLists 컬렉션에 postInfo 객체에 저장된 게시글내용을 업로드
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override

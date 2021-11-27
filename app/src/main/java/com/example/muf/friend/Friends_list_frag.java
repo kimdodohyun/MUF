@@ -2,7 +2,6 @@ package com.example.muf.friend;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,23 +14,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.muf.ChatActivity;
 import com.example.muf.R;
-import com.example.muf.friend.FriendRecyclerAdapter;
-import com.example.muf.friend.OnItemClickEventListener;
 import com.example.muf.homeActivity;
 import com.example.muf.model.UserModel;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.auth.User;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 public class Friends_list_frag extends Fragment {
 
@@ -96,7 +90,7 @@ public class Friends_list_frag extends Fragment {
             @Override
             public void onItemClick(FriendRecyclerAdapter.ViewHolder holder, View view, int pos) {
                 UserModel item = adapter.getItem(pos);
-                homeActivity.mSpotifyAppRemote.getPlayerApi().play(item.getProfileMusicUrl());
+                homeActivity.mSpotifyAppRemote.getPlayerApi().play(item.getProfileMusicUri());
             }
         });
 

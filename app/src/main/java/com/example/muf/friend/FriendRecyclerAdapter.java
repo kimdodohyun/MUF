@@ -1,7 +1,6 @@
 package com.example.muf.friend;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -107,10 +106,10 @@ public class FriendRecyclerAdapter extends RecyclerView.Adapter<FriendRecyclerAd
             if(item.getProfileImageUrl() != null){
                 Picasso.get().load(item.getProfileImageUrl()).into(profile);
             }
-            if(item.getProfileMusicUrl()!=null) {
+            if(item.getProfileMusicUri()!=null) {
                 SpotifyApi spotifyApi = new SpotifyApi();
                 spotifyApi.setAccessToken(homeActivity.AUTH_TOKEN);
-                String[]  parse = item.getProfileMusicUrl().split(":");
+                String[]  parse = item.getProfileMusicUri().split(":");
                 Track track = spotifyApi.getService().getTrack(parse[2]);
                 profileMusic.setText(track.artists.get(0).name + " - " + track.name);
                 profileMusic.setSelected(true);

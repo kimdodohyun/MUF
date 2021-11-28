@@ -21,6 +21,8 @@ import com.example.muf.SetZone.SetZoneActivity;
 import com.example.muf.Streaming.Stream;
 import com.example.muf.communityfrag.Community_frag;
 import com.example.muf.friend.Friends_list_frag;
+import com.example.muf.model.OtherSongList;
+import com.example.muf.model.UserModel;
 import com.example.muf.myprofilefrag.Myprofile_frag;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -31,6 +33,8 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
@@ -40,8 +44,11 @@ import com.spotify.sdk.android.auth.AuthorizationClient;
 import com.spotify.sdk.android.auth.AuthorizationRequest;
 import com.spotify.sdk.android.auth.AuthorizationResponse;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import kaaes.spotify.webapi.android.SpotifyApi;
 
 public class homeActivity extends AppCompatActivity {
     public static String AUTH_TOKEN;
@@ -71,6 +78,11 @@ public class homeActivity extends AppCompatActivity {
     private String user_uid;
     private String current_uri;
     private ImageButton friendRequest;
+    private OtherSongList mySongList;
+    private ArrayList<String> otherUserList;
+    public static ArrayList<String> recommendList;
+    private String myUid;
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -164,6 +176,65 @@ public class homeActivity extends AppCompatActivity {
                         mSpotifyAppRemote.getPlayerApi().pause();
                     }
                 });
+            }
+        });
+
+        db = FirebaseFirestore.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
+        myUid = firebaseAuth.getUid();
+        mySongList = new OtherSongList();
+        otherUserList = new ArrayList<>();
+        recommendList = new ArrayList<>();
+
+        db.collection("Users").document(myUid)
+                .collection("mySongList").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                mySongList.setUid(myUid);
+                for(QueryDocumentSnapshot doc : task.getResult()){
+                    String artistName = doc.getString("artist_name");
+                    //현재 artist가 Map에 존재하지 않는 key이면 put
+                    if(!mySongList.getMap().containsKey(artistName)){
+                        mySongList.putData(artistName);
+                    }
+                }
+            }
+        });
+
+        db.collectionGroup("Myinfo").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                for(QueryDocumentSnapshot doc : task.getResult()){
+                    if(doc.getString("uid").equals(myUid))
+                        continue;
+                    otherUserList.add(doc.getString("uid"));
+                    Log.d("grouptest", "onComplete: "+doc.getString("uid"));
+                }
+                for(int i =0; i<otherUserList.size(); i++){
+                    String tmp = otherUserList.get(i);
+                    Log.d("listTest", "onCreate: "+otherUserList.get(i));
+                    db.collection("Users").document(otherUserList.get(i))
+                            .collection("mySongList").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            int flag = 0;
+                            for (QueryDocumentSnapshot doc : task.getResult()) {
+                                String artistName = doc.getString("artist_name");
+                                HashMap<String, Integer> myMap = mySongList.getMap();
+                                for (String name : myMap.keySet()) {
+                                    if (name.equals(artistName)) {
+                                        recommendList.add(tmp);
+                                        Log.d("recommandTEst", "onComplete: " + tmp);
+                                        flag = 1;
+                                        break;
+                                    }
+                                }
+                                if(flag == 1)
+                                    break;
+                            }
+                        }
+                    });
+                }
             }
         });
     }

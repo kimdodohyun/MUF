@@ -50,6 +50,7 @@
                 android:layout_height="150dp"
                 android:layout_gravity="center"
                 android:layout_marginBottom="10dp"
+                android:scaleType="centerCrop"
                 app:srcCompat="@drawable/ic_baseline_portrait_24" />
 
             <LinearLayout

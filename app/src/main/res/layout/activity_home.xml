@@ -18,22 +18,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/home_title"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="MUF"
-            android:textSize="34sp"
-            app:layout_constraintStart_toStartOf="parent" />
+
 
         <ImageView
             android:id="@+id/imageView3"
-            android:layout_width="wrap_content"
+            android:layout_width="110dp"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/home_title"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_baseline_music_note_24" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@drawable/logo" />
 
         <ImageButton
             android:id="@+id/search_location"

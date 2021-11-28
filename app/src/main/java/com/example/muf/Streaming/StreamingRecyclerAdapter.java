@@ -1,6 +1,7 @@
 package com.example.muf.Streaming;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +39,7 @@ public class StreamingRecyclerAdapter extends RecyclerView.Adapter<StreamingRecy
     @Override
     public void onBindViewHolder(@NonNull StreamingRecyclerAdapter.ViewHolder holder, int position) {
         holder.onBind(streamList.get(position));
+        Log.d("testonstream", "onBindViewHolder: " + streamList.get(position).getArtistName());
     }
 
     @Override

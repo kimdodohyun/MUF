@@ -58,23 +58,21 @@ public class Home_frag extends Fragment {
     private OtherSongList otherSongList;
     private OtherSongList mySongList;
     private ArrayList<OtherSongList> arrayListOtherSongList;
-    private ArrayList<String> recommedFriendUidList;
+    private ArrayList<String> otherUserList;
+    private ArrayList<String> recommendList;
     private UserModel userInfo;
     private ArrayList<UserModel> arrayListUserModel;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        arrayListUserModel = new ArrayList<>();
-        arrayListOtherSongList = new ArrayList<>();
-        userInfo = new UserModel();
-        firebaseAuth = FirebaseAuth.getInstance();
+       db = FirebaseFirestore.getInstance();
+       userInfo = new UserModel();
+       firebaseAuth = FirebaseAuth.getInstance();
         myUid = firebaseAuth.getUid();
-        mySongList = new OtherSongList();
-        recommedFriendUidList = new ArrayList<>();
-        addArrayList(myUid, mySongList);
-
-        Log.d("HomeFrag onCreate", "kimgijeong");
+        streamList = new ArrayList<>();
+        spotifyApi = new SpotifyApi();
+       arrayListUserModel = new ArrayList<>();
     }
 
     @Nullable
@@ -86,13 +84,10 @@ public class Home_frag extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(),LinearLayoutManager.HORIZONTAL,false));
         recyclerViewRecommendFriend.setHasFixedSize(true);
-        recyclerViewRecommendFriend.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerViewRecommendFriend.setLayoutManager(new LinearLayoutManager(getActivity(),LinearLayoutManager.HORIZONTAL,false));
         No_textview = view.findViewById(R.id.No_zone_inhome);
         Set_textview = view.findViewById(R.id.view_myzone_inhome);
-        db = FirebaseFirestore.getInstance();
-        uriList = new ArrayList<>();
-        streamList = new ArrayList<>();
-        spotifyApi = new SpotifyApi();
+
         return view;
     }
 
@@ -136,19 +131,34 @@ public class Home_frag extends Fragment {
                                 if(parse1[0].equals(myUid))
                                     continue;
                                 otherUid = parse1[0];
-                                otherSongList = new OtherSongList();
-                                addArrayList(otherUid, otherSongList);
+//                                adapterRecommendFriend.notifyDataSetChanged();
+                                Log.d("starttest", "onComplete: "+homeActivity.recommendList.size());
+                                for(int i =0; i<homeActivity.recommendList.size(); i++){
+                                    if(homeActivity.recommendList.get(i).equals(otherUid)){
+                                        db.collection("Users").document(otherUid).collection("Myinfo").document("info")
+                                                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                UserModel user = new UserModel();
+                                                user = task.getResult().toObject(UserModel.class);
+                                                arrayListUserModel.add(user);
+                                                recyclerViewRecommendFriend.setAdapter(adapterRecommendFriend);
+                                                Log.d("starttest", "onComplete: " + user.getUid());
+                                            }
+                                        });
+                                    }
+                                }
+                                adapterRecommendFriend.notifyDataSetChanged();
                                 String parse2[] = parse1[1].split(":");
                                 Track track = spotifyApi.getService().getTrack(parse2[2]);
                                 Stream stream = new Stream(track.name, track.artists.get(0).name, track.album.images.get(0).url, parse1[1]);
                                 streamList.add(stream);
                             }
                             adapter.notifyDataSetChanged();
-                            adapterRecommendFriend.notifyDataSetChanged();
                         }
                     });
-            recyclerViewRecommendFriend.setAdapter(adapterRecommendFriend);
             recyclerView.setAdapter(adapter);
+            Log.d("bindTest", "onStart: after adapter" );
             adapter.setOnItemClickListener(new OnItemClickEventListener() {
                 @Override
                 public void onItemClick(StreamingRecyclerAdapter.ViewHolder holder, View view, int pos) {
@@ -156,64 +166,6 @@ public class Home_frag extends Fragment {
                     homeActivity.mSpotifyAppRemote.getPlayerApi().play(item.getTrackUri());
                 }
             });
-        }
-    }
-
-    public void addArrayList(String otherUserUid, OtherSongList otherSongList){
-        //해당 유저 uid로 Users/uid/mySongList에 접근하여
-        //애창곡 리스트에서 artist들을 가져오기
-        Log.d(TAG, "gijeong" + otherUserUid);
-        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-        firebaseFirestore.collection("Users").document(otherUserUid)
-                .collection("mySongList").get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        if(!queryDocumentSnapshots.isEmpty()){
-                            otherSongList.setUid(otherUserUid);
-                            for(QueryDocumentSnapshot doc : queryDocumentSnapshots){
-                                String artistName = doc.getString("artist_name");
-                                Log.d(TAG, "gijeong: " + artistName);
-                                //현재 artist가 Map에 존재하지 않는 key이면 put
-                                if(!otherSongList.getMap().containsKey(artistName)){
-                                    otherSongList.putData(artistName);
-                                    Log.d(TAG, "gijeong: " + otherSongList.getMap().get(artistName));
-                                }
-                            }
-                            //otherUser의 애창곡 리스트 객체화 성공했으면 내 애창곡 리스트와 비교
-                            if(otherUserUid != myUid){
-                                searchSongList(mySongList, otherSongList);
-                            }
-                        }
-                    }
-                });
-    }
-
-    public void searchSongList(OtherSongList mySongList, OtherSongList otherSongList){
-        Log.d(TAG, "gijeong Enter searchSongList: ");
-        HashMap<String, Integer> myMap = mySongList.getMap();
-        HashMap<String, Integer> otherMap = otherSongList.getMap();
-        for(String artistName : myMap.keySet()){ //내 애청곡 리스트의 artistName 참조
-            if(otherMap.containsKey(artistName)){ //상대방 애청곡 리스트에 artistName이 겹치면
-                DocumentReference docRef = db.collection("Users").document(otherSongList.getUid())
-                        .collection("Myinfo").document("info");
-                docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        Log.d(TAG, "gijeong onComplete: " );
-                        if(task.isSuccessful()){
-                            DocumentSnapshot document = task.getResult();
-                            if(document.exists()){
-                                userInfo = document.toObject(UserModel.class);
-                                arrayListUserModel.add(userInfo);
-                                Log.d(TAG, "gijeong onComplete: " + userInfo.getUid());
-                                Log.d(TAG, "gijeong onComplete: " + arrayListUserModel.size());
-                            }
-                            adapterRecommendFriend.notifyDataSetChanged();
-                        }
-                    }
-                });
-            }
         }
     }
 }

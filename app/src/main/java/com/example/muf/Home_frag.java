@@ -127,6 +127,7 @@ public class Home_frag extends Fragment {
                     .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            streamList.clear();
                             DocumentSnapshot doc = task.getResult();
                             for (Object value : doc.getData().values()) {
                                 String parse1[] = value.toString().split("_");
@@ -134,8 +135,7 @@ public class Home_frag extends Fragment {
                                 if(parse1[0].equals(myUid))
                                     continue;
                                 otherUid = parse1[0];
-//                                adapterRecommendFriend.notifyDataSetChanged();
-                                Log.d("starttest", "onComplete: "+homeActivity.recommendList.size());
+                                arrayListUserModel.clear();
                                 for(int i =0; i<homeActivity.recommendList.size(); i++){
                                     if(homeActivity.recommendList.get(i).equals(otherUid)){
                                         db.collection("Users").document(otherUid).collection("Myinfo").document("info")

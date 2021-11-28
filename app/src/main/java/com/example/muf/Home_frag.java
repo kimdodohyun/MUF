@@ -1,5 +1,6 @@
 package com.example.muf;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,9 +17,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.muf.Streaming.OnItemClickEventListener;
 import com.example.muf.Streaming.Stream;
 import com.example.muf.Streaming.StreamingRecyclerAdapter;
+import com.example.muf.communityfrag.post.PostInfoAdapter;
 import com.example.muf.friend.RecommenFriendAdapter;
 import com.example.muf.model.OtherSongList;
 import com.example.muf.model.UserModel;
+import com.example.muf.otheruserprofile.OtherUserProfileActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -164,6 +167,16 @@ public class Home_frag extends Fragment {
                 public void onItemClick(StreamingRecyclerAdapter.ViewHolder holder, View view, int pos) {
                     Stream item = adapter.getItem(pos);
                     homeActivity.mSpotifyAppRemote.getPlayerApi().play(item.getTrackUri());
+                }
+            });
+            adapterRecommendFriend.setOnItemClickListener(new RecommenFriendAdapter.OnItemClickEventListener(){
+                @Override
+                public void onItemClick(View view, int pos) {
+                    String otherUserUid = arrayListUserModel.get(pos).getUid();
+                    Intent intent = new Intent(getActivity(), OtherUserProfileActivity.class);
+                    intent.putExtra("otherUid", otherUserUid);
+                    intent.putExtra("myUid", myUid);
+                    startActivity(intent);
                 }
             });
         }

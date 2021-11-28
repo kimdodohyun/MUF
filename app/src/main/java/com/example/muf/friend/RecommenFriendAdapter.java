@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.muf.R;
 import com.example.muf.Streaming.StreamingRecyclerAdapter;
+import com.example.muf.communityfrag.post.PostInfoAdapter;
 import com.example.muf.homeActivity;
 import com.example.muf.model.UserModel;
 import com.squareup.picasso.Picasso;
@@ -27,7 +28,12 @@ import kaaes.spotify.webapi.android.models.Track;
 public class RecommenFriendAdapter extends RecyclerView.Adapter<RecommenFriendAdapter.recommendViewHolder> {
     private ArrayList<UserModel> arrayList;
     private Context context;
+    public interface OnItemClickEventListener{ void onItemClick(View view, int pos);}
+    private RecommenFriendAdapter.OnItemClickEventListener itemClickEventListener;
 
+    public void setOnItemClickListener(RecommenFriendAdapter.OnItemClickEventListener listener){
+        itemClickEventListener = listener;
+    }
     public RecommenFriendAdapter(ArrayList<UserModel> ArrayList, Context Context){
         this.arrayList = ArrayList;
         this.context = Context;;
@@ -36,7 +42,7 @@ public class RecommenFriendAdapter extends RecyclerView.Adapter<RecommenFriendAd
     @Override
     public recommendViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_recommend_friend, parent, false);
-        return new recommendViewHolder(view);
+        return new recommendViewHolder(view, itemClickEventListener);
     }
 
     @Override
@@ -71,10 +77,19 @@ public class RecommenFriendAdapter extends RecyclerView.Adapter<RecommenFriendAd
         TextView tv_nickName;
         ImageView iv_profileMusicImg;
 
-        public recommendViewHolder(@NonNull View itemView) {
+        public recommendViewHolder(@NonNull View itemView, final RecommenFriendAdapter.OnItemClickEventListener listener) {
             super(itemView);
             tv_nickName = (TextView) itemView.findViewById(R.id.userNickNameInHomeFrag);
             iv_profileMusicImg = (ImageView) itemView.findViewById(R.id.userProfileMusicImgInHomeFrag);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    final int pos = getAdapterPosition();
+                    if(pos != RecyclerView.NO_POSITION){
+                        listener.onItemClick(view, pos);
+                    }
+                }
+            });
         }
     }
 }

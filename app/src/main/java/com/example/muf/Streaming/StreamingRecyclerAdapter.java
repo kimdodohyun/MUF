@@ -84,6 +84,8 @@ public class StreamingRecyclerAdapter extends RecyclerView.Adapter<StreamingRecy
         void onBind(Stream item){
             stream_artist.setText(item.getArtistName());
             stream_track.setText(item.getTrackName());
+            stream_track.setSelected(true);
+            stream_artist.setSelected(true);
             Glide.with(itemView.getContext()).load(item.getTrackImgUri()).into(stream_img);
         }
     }

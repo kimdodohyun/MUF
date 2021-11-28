@@ -73,7 +73,6 @@ public class EventActivity extends Activity {
         btn_confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d("click test", "onClick: test");
                 db.collection("FriendRequestLists").document(uid)
                         .update("requestlist", FieldValue.arrayUnion(FirebaseAuth.getInstance().getUid()))
                         .addOnCompleteListener(new OnCompleteListener<Void>() {

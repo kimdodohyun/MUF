@@ -62,6 +62,11 @@ public class MySongListActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
         user_uid = firebaseAuth.getUid();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         userinfo = new UserModel();
         docRef = db.collection("Users").document(user_uid)
                 .collection("Myinfo").document("info");
@@ -76,11 +81,6 @@ public class MySongListActivity extends AppCompatActivity {
                 }
             }
         });
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
         recyclerView = findViewById(R.id.recyclerViewInMySong);
         recyclerView.setHasFixedSize(true); //리사이클러뷰 기존성능 강화
         layoutManager = new LinearLayoutManager(this);

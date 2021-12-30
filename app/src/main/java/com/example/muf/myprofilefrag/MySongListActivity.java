@@ -129,7 +129,22 @@ public class MySongListActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
                         Log.d("MySongListActivity", "onSuccess: " + "추가한 노래 db업로드 성공");
-                        docRef.update("songcount", userinfo.getSongcount()+1);
+                        userinfo = new UserModel();
+                        docRef = db.collection("Users").document(user_uid)
+                                .collection("Myinfo").document("info");
+                        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if(task.isSuccessful()){
+                                    DocumentSnapshot document = task.getResult();
+                                    if(document.exists()){
+                                        userinfo = document.toObject(UserModel.class);
+                                    }
+                                    docRef.update("songcount", userinfo.getSongcount()+1);
+                                }
+                            }
+                        });
+
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
